@@ -9,9 +9,9 @@
 Java 21을 설치한 뒤 프로젝트 루트에서 실행합니다. Gradle Wrapper가 포함되어 있습니다.
 
 ```sh
-./gradlew test bootJar
+bash ./gradlew test bootJar
 export ANBU_DEMO_PASSWORD='replace-with-your-local-demo-password'
-./gradlew bootRun --args='--spring.profiles.active=demo'
+bash ./gradlew bootRun --args='--spring.profiles.active=demo'
 ```
 
 기본 주소는 `http://localhost:8080/api/v1`입니다. 기본 H2 데이터베이스는 `data/anbu`에 저장되어 재시작 후에도 유지됩니다. `demo` 프로필은 비어 있는 데이터베이스에 가상의 기관·공공장소·검사·계정을 생성합니다. 시연용 지표는 null이며 실제 안산 통계가 아닙니다. 비밀번호는 12자 이상, UTF-8 72바이트 이하로 설정합니다.
@@ -117,7 +117,7 @@ ID는 기준 조회 API에서 선택합니다. 시연 데이터의 첫 검사 �
 ## 검증
 
 ```sh
-./gradlew clean test bootJar
+bash ./gradlew clean test bootJar
 ```
 
 테스트는 H2의 PostgreSQL 호환 모드에서 인증·만료, 기관 권한, 부분 처리, 중복 처리, 실제 제공량 초과, 동시 계획 선점, 동시 실적 배분, 일괄 롤백, 연결 방문 보호, 지도 공백 경계, 서비스별 이력, 기준 설정을 확인합니다.
