@@ -5,6 +5,10 @@ spring:
     url: ${ANBU_DB_URL:jdbc:h2:file:./data/anbu;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH}
     username: ${ANBU_DB_USERNAME:sa}
     password: ${ANBU_DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
   jackson:
     time-zone: Asia/Seoul
     deserialization:
