@@ -2,27 +2,27 @@ package kr.anbu.reference;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.springframework.jdbc.core.JdbcTemplate;
+import kr.anbu.persistence.repository.VisitCycleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class VisitCycleService {
-    private final JdbcTemplate jdbc;
+    private final VisitCycleRepository repository;
 
-    public VisitCycleService(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
+    public VisitCycleService(VisitCycleRepository repository) {
+        this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Integer> cycles(long organizationId) {
         Map<String, Integer> cycles = new LinkedHashMap<>();
         cycles.put("A", 30);
         cycles.put("B", 90);
         cycles.put("C", 60);
         cycles.put("D", null);
-        jdbc.query("SELECT service_code, cycle_days FROM visit_cycles WHERE organization_id = ?",
-                rs -> {
-                    cycles.put(rs.getString("service_code"), rs.getObject("cycle_days", Integer.class));
-                }, organizationId);
+        repository.findByOrganizationId(organizationId)
+                .forEach(cycle -> cycles.put(cycle.getServiceCode(), cycle.getCycleDays()));
         return cycles;
     }
 }

@@ -6,36 +6,56 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.Validator;
 import kr.anbu.auth.Actor;
 import kr.anbu.common.ApiException;
+import kr.anbu.persistence.entity.*;
+import kr.anbu.persistence.repository.*;
 import kr.anbu.requests.RequestService;
-import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.PreparedStatement;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 
 import static kr.anbu.requests.RequestService.*;
 
 @Service
 public class VisitService {
-    private final JdbcTemplate jdbc;
+    private final VisitRepository visits;
+    private final VisitServiceCodeRepository serviceCodes;
+    private final VisitTestRepository visitTests;
+    private final TestRequestRepository testRequests;
+    private final RequestFulfillmentRepository fulfillments;
+    private final PlaceRepository places;
+    private final TestTypeRepository testTypes;
+    private final OrganizationRepository organizations;
     private final RequestService requests;
     private final ObjectMapper mapper;
     private final Validator validator;
+    private final Clock clock;
 
-    public VisitService(JdbcTemplate jdbc, RequestService requests, ObjectMapper mapper, Validator validator) {
-        this.jdbc = jdbc;
+    public VisitService(VisitRepository visits, VisitServiceCodeRepository serviceCodes, VisitTestRepository visitTests,
+                        TestRequestRepository testRequests, RequestFulfillmentRepository fulfillments,
+                        PlaceRepository places, TestTypeRepository testTypes, OrganizationRepository organizations,
+                        RequestService requests, ObjectMapper mapper, Validator validator, Clock clock) {
+        this.visits = visits;
+        this.serviceCodes = serviceCodes;
+        this.visitTests = visitTests;
+        this.testRequests = testRequests;
+        this.fulfillments = fulfillments;
+        this.places = places;
+        this.testTypes = testTypes;
+        this.organizations = organizations;
         this.requests = requests;
         this.mapper = mapper;
         this.validator = validator;
+        this.clock = clock;
     }
 
     @Transactional
@@ -45,18 +65,30 @@ public class VisitService {
         validatePlace(input.placeId());
         Map<Long, Integer> performed = testCounts(input.performedTests(), input.serviceCodes(), true);
         Map<Long, Integer> requested = testCounts(input.requestedTests(), input.serviceCodes(), false);
-        long visitId = insertId("INSERT INTO visits(visit_date,place_id,organization_id,created_by,memo) VALUES(?,?,?,?,?)",
-                input.visitDate(), input.placeId(), organizationId, Actor.current().id(), input.memo());
+        Visit visit = new Visit();
+        visit.setVisitDate(input.visitDate());
+        visit.setPlaceId(input.placeId());
+        visit.setOrganizationId(organizationId);
+        visit.setCreatedBy(Actor.current().id());
+        visit.setMemo(input.memo());
+        visit.setCreatedAt(OffsetDateTime.now(clock));
+        long visitId = visits.saveAndFlush(visit).getId();
         saveServicesAndTests(visitId, input.serviceCodes(), performed);
         List<Long> requestIds = new ArrayList<>();
         for (var test : requested.entrySet()) {
-            requestIds.add(insertId("""
-                    INSERT INTO test_requests(source_visit_id,place_id,test_type_id,requested_count,requested_date,requested_by_organization_id)
-                    VALUES(?,?,?,?,?,?)
-                    """, visitId, input.placeId(), test.getKey(), test.getValue(), input.visitDate(), organizationId));
+            TestRequest request = new TestRequest();
+            request.setSourceVisitId(visitId);
+            request.setPlaceId(input.placeId());
+            request.setTestTypeId(test.getKey());
+            request.setRequestedCount(test.getValue());
+            request.setRequestedDate(input.visitDate());
+            request.setRequestedByOrganizationId(organizationId);
+            request.setStatus("PENDING");
+            request.setCreatedAt(OffsetDateTime.now(clock));
+            requestIds.add(testRequests.saveAndFlush(request).getId());
         }
-        List<Map<String, Object>> fulfillments = new ArrayList<>();
-        // Stable request lock ordering prevents two multi-request visits from deadlocking.
+        List<Map<String, Object>> applied = new ArrayList<>();
+        // All request locks for this visit are acquired in a stable order.
         List<VisitInput.Fulfillment> ordered = input.fulfilledRequests().stream()
                 .sorted(Comparator.comparing(VisitInput.Fulfillment::requestId)).toList();
         for (var fulfillment : ordered) {
@@ -64,9 +96,9 @@ public class VisitService {
             result.remove("visitId");
             result.remove("completedDate");
             result.remove("daysToComplete");
-            fulfillments.add(result);
+            applied.add(result);
         }
-        return fields("visitId", visitId, "createdRequestIds", requestIds, "fulfillments", fulfillments);
+        return fields("visitId", visitId, "createdRequestIds", requestIds, "fulfillments", applied);
     }
 
     @Transactional
@@ -102,7 +134,7 @@ public class VisitService {
     }
 
     private void validatePlace(long id) {
-        if (jdbc.queryForObject("SELECT COUNT(*) FROM places WHERE id=?", Long.class, id) == 0) {
+        if (!places.existsById(id)) {
             throw missing();
         }
     }
@@ -110,11 +142,8 @@ public class VisitService {
     private Map<Long, Integer> testCounts(List<VisitInput.TestCount> tests, List<String> services, boolean performed) {
         Map<Long, Integer> counts = new TreeMap<>();
         for (var test : tests) {
-            List<String> codes = jdbc.query("SELECT service_code FROM test_types WHERE id=?", (rs, n) -> rs.getString(1), test.testTypeId());
-            if (codes.isEmpty()) {
-                throw missing();
-            }
-            if (performed && !services.contains(codes.getFirst())) {
+            TestType type = testTypes.findById(test.testTypeId()).orElseThrow(RequestService::missing);
+            if (performed && !services.contains(type.getServiceCode())) {
                 throw invalid("제공 검사의 서비스 유형을 선택해 주세요.");
             }
             if (performed && !requests.capable(test.testTypeId(), Actor.current().organizationId())) {
@@ -131,40 +160,31 @@ public class VisitService {
 
     private void saveServicesAndTests(long id, List<String> services, Map<Long, Integer> tests) {
         for (String service : services) {
-            jdbc.update("INSERT INTO visit_services(visit_id,service_code) VALUES(?,?)", id, service);
+            VisitServiceCode entry = new VisitServiceCode();
+            entry.setVisitId(id);
+            entry.setServiceCode(service);
+            serviceCodes.save(entry);
         }
         for (var test : tests.entrySet()) {
-            jdbc.update("INSERT INTO visit_tests(visit_id,test_type_id,test_count) VALUES(?,?,?)", id, test.getKey(), test.getValue());
+            VisitTest entry = new VisitTest();
+            entry.setVisitId(id);
+            entry.setTestTypeId(test.getKey());
+            entry.setTestCount(test.getValue());
+            visitTests.save(entry);
         }
+        visitTests.flush();
     }
 
-    private long insertId(String sql, Object... args) {
-        GeneratedKeyHolder key = new GeneratedKeyHolder();
-        jdbc.update(connection -> {
-            PreparedStatement statement = connection.prepareStatement(sql, new String[]{"id"});
-            for (int i = 0; i < args.length; i++) {
-                statement.setObject(i + 1, args[i]);
-            }
-            return statement;
-        }, key);
-        return Objects.requireNonNull(key.getKey()).longValue();
-    }
-
-    private Map<String, Object> ownLockedVisit(long id) {
-        List<Map<String, Object>> visits = jdbc.query("SELECT organization_id FROM visits WHERE id=? FOR UPDATE",
-                (rs, n) -> fields("organizationId", rs.getLong(1)), id);
-        if (visits.isEmpty()) {
-            throw missing();
-        }
-        if (!Objects.equals(visits.getFirst().get("organizationId"), Actor.current().organizationId())) {
+    private Visit ownLockedVisit(long id) {
+        Visit visit = visits.findLockedById(id).orElseThrow(RequestService::missing);
+        if (!Objects.equals(visit.getOrganizationId(), Actor.current().organizationId())) {
             throw forbidden();
         }
-        return view(id);
+        return visit;
     }
 
     private boolean linked(long id) {
-        return jdbc.queryForObject("SELECT COUNT(*) FROM test_requests WHERE source_visit_id=?", Long.class, id) > 0
-                || jdbc.queryForObject("SELECT COUNT(*) FROM request_fulfillments WHERE visit_id=?", Long.class, id) > 0;
+        return testRequests.existsBySourceVisitId(id) || fulfillments.existsByVisitId(id);
     }
 
     private ApiException linkedConflict() {
@@ -173,7 +193,7 @@ public class VisitService {
 
     @Transactional
     public Map<String, Object> update(long id, JsonNode patch) {
-        Map<String, Object> current = ownLockedVisit(id);
+        Visit visit = ownLockedVisit(id);
         Set<String> allowed = Set.of("visitDate", "placeId", "serviceCodes", "performedTests", "memo");
         if (!patch.isObject() || patch.isEmpty()) {
             throw invalid("수정할 필드를 입력해 주세요.");
@@ -187,22 +207,25 @@ public class VisitService {
         if (linked(id) && (patch.size() != 1 || !patch.has("memo"))) {
             throw linkedConflict();
         }
+        OffsetDateTime now = OffsetDateTime.now(clock);
         if (patch.size() == 1 && patch.has("memo")) {
             if (!patch.get("memo").isTextual() || patch.get("memo").textValue().length() > 2000) {
                 throw invalid("메모는 2000자 이하의 문자열이어야 합니다.");
             }
-            OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
-            jdbc.update("UPDATE visits SET memo=?,updated_at=? WHERE id=?", patch.get("memo").textValue(), now, id);
+            visit.setMemo(patch.get("memo").textValue());
+            visit.setUpdatedAt(now);
+            visits.saveAndFlush(visit);
             return fields("visitId", id, "updatedAt", now);
         }
+        Map<String, Object> current = mapView(visit);
         ObjectNode merged = mapper.createObjectNode();
         for (String field : allowed) {
             merged.set(field, mapper.valueToTree(current.get(field)));
         }
-        // Response test entries contain read-only name/serviceCode properties.
-        merged.set("performedTests", mapper.valueToTree(jdbc.query("SELECT test_type_id,test_count FROM visit_tests WHERE visit_id=?",
-                (rs, n) -> fields("testTypeId", rs.getLong(1), "count", rs.getInt(2)), id)));
-        patch.fields().forEachRemaining(entry -> merged.set(entry.getKey(), entry.getValue()));
+        // Only writable test fields participate in patch validation.
+        merged.set("performedTests", mapper.valueToTree(visitTests.findByVisitIdOrderByTestTypeIdAsc(id).stream()
+                .map(test -> fields("testTypeId", test.getTestTypeId(), "count", test.getTestCount())).toList()));
+        patch.properties().forEach(entry -> merged.set(entry.getKey(), entry.getValue()));
         if (patch.has("memo") && !patch.get("memo").isTextual()) {
             throw invalid("메모는 문자열이어야 합니다.");
         }
@@ -215,87 +238,77 @@ public class VisitService {
         validate(updated);
         validatePlace(updated.placeId());
         Map<Long, Integer> tests = testCounts(updated.performedTests(), updated.serviceCodes(), true);
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
-        jdbc.update("UPDATE visits SET visit_date=?,place_id=?,memo=?,updated_at=? WHERE id=?", updated.visitDate(), updated.placeId(), updated.memo(), now, id);
+        visit.setVisitDate(updated.visitDate());
+        visit.setPlaceId(updated.placeId());
+        visit.setMemo(updated.memo());
+        visit.setUpdatedAt(now);
+        visits.saveAndFlush(visit);
         if (patch.has("serviceCodes") || patch.has("performedTests")) {
-            jdbc.update("DELETE FROM visit_services WHERE visit_id=?", id);
-            jdbc.update("DELETE FROM visit_tests WHERE visit_id=?", id);
+            deleteServicesAndTests(id);
             saveServicesAndTests(id, updated.serviceCodes(), tests);
         }
         return fields("visitId", id, "updatedAt", now);
     }
 
+    private void deleteServicesAndTests(long id) {
+        serviceCodes.deleteByVisitId(id);
+        visitTests.deleteByVisitId(id);
+        visitTests.flush();
+    }
+
     @Transactional
     public Map<String, Object> delete(long id) {
-        ownLockedVisit(id);
+        Visit visit = ownLockedVisit(id);
         if (linked(id)) {
             throw linkedConflict();
         }
-        jdbc.update("DELETE FROM visit_services WHERE visit_id=?", id);
-        jdbc.update("DELETE FROM visit_tests WHERE visit_id=?", id);
-        jdbc.update("DELETE FROM visits WHERE id=?", id);
+        deleteServicesAndTests(id);
+        visits.delete(visit);
+        visits.flush();
         return fields("visitId", id, "deleted", true);
     }
 
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public Map<String, Object> view(long id) {
-        List<Map<String, Object>> rows = jdbc.query("""
-                SELECT v.*,o.name AS organization_name FROM visits v JOIN organizations o ON o.id=v.organization_id WHERE v.id=?
-                """, (rs, n) -> fields("visitId", id, "placeId", rs.getLong("place_id"), "organization", fields("id", rs.getLong("organization_id"), "name", rs.getString("organization_name")),
-                "visitDate", rs.getObject("visit_date", LocalDate.class), "memo", rs.getString("memo"),
-                "createdAt", rs.getObject("created_at", OffsetDateTime.class), "updatedAt", rs.getObject("updated_at", OffsetDateTime.class)), id);
-        if (rows.isEmpty()) {
-            throw missing();
-        }
-        Map<String, Object> visit = rows.getFirst();
-        visit.put("serviceCodes", jdbc.query("SELECT service_code FROM visit_services WHERE visit_id=? ORDER BY service_code", (rs, n) -> rs.getString(1), id));
-        visit.put("performedTests", jdbc.query("""
-                SELECT vt.*,t.name,t.service_code FROM visit_tests vt JOIN test_types t ON t.id=vt.test_type_id WHERE vt.visit_id=? ORDER BY t.id
-                """, (rs, n) -> fields("testTypeId", rs.getLong("test_type_id"), "name", rs.getString("name"), "serviceCode", rs.getString("service_code"), "count", rs.getInt("test_count")), id));
-        visit.put("createdRequestIds", jdbc.query("SELECT id FROM test_requests WHERE source_visit_id=? ORDER BY id", (rs, n) -> rs.getLong(1), id));
-        visit.put("fulfillments", jdbc.query("SELECT request_id,completed_count FROM request_fulfillments WHERE visit_id=? ORDER BY request_id",
-                (rs, n) -> fields("requestId", rs.getLong(1), "completedCount", rs.getInt(2)), id));
-        return visit;
+        return mapView(visits.findById(id).orElseThrow(RequestService::missing));
+    }
+
+    private Map<String, Object> mapView(Visit visit) {
+        long id = visit.getId();
+        Organization organization = organizations.findById(visit.getOrganizationId()).orElseThrow(RequestService::missing);
+        return fields("visitId", id, "placeId", visit.getPlaceId(),
+                "organization", fields("id", organization.getId(), "name", organization.getName()),
+                "visitDate", visit.getVisitDate(), "memo", visit.getMemo(),
+                "createdAt", visit.getCreatedAt(), "updatedAt", visit.getUpdatedAt(),
+                "serviceCodes", serviceCodes.findByVisitIdOrderByServiceCodeAsc(id).stream().map(VisitServiceCode::getServiceCode).toList(),
+                "performedTests", visitTests.findByVisitIdOrderByTestTypeIdAsc(id).stream().map(this::testView).toList(),
+                "createdRequestIds", testRequests.findBySourceVisitIdOrderByIdAsc(id).stream().map(TestRequest::getId).toList(),
+                "fulfillments", fulfillments.findByVisitIdOrderByRequestIdAsc(id).stream()
+                        .map(fulfillment -> fields("requestId", fulfillment.getRequestId(), "completedCount", fulfillment.getCompletedCount())).toList());
+    }
+
+    private Map<String, Object> testView(VisitTest test) {
+        TestType type = testTypes.findById(test.getTestTypeId()).orElseThrow(RequestService::missing);
+        return fields("testTypeId", type.getId(), "name", type.getName(), "serviceCode", type.getServiceCode(), "count", test.getTestCount());
     }
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public Map<String, Object> list(Long placeId, Long dongId, Long organizationId, String serviceCode,
                                     Long testTypeId, LocalDate fromDate, LocalDate toDate, int page, int size) {
         validatePage(page, size);
+        validateId(placeId);
+        validateId(dongId);
+        validateId(organizationId);
+        validateId(testTypeId);
         if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
             throw invalid("시작일은 종료일 이전이어야 합니다.");
         }
-        StringBuilder where = new StringBuilder(" FROM visits v JOIN places p ON p.id=v.place_id WHERE 1=1");
-        List<Object> args = new ArrayList<>();
-        addFilter(where, args, "v.place_id", placeId);
-        addFilter(where, args, "p.dong_id", dongId);
-        addFilter(where, args, "v.organization_id", organizationId);
-        if (serviceCode != null) {
-            if (!Set.of("A", "B", "C", "D").contains(serviceCode)) {
-                throw invalid("서비스 유형이 올바르지 않습니다.");
-            }
-            where.append(" AND EXISTS(SELECT 1 FROM visit_services s WHERE s.visit_id=v.id AND s.service_code=?)");
-            args.add(serviceCode);
+        if (serviceCode != null && !Set.of("A", "B", "C", "D").contains(serviceCode)) {
+            throw invalid("서비스 유형이 올바르지 않습니다.");
         }
-        if (testTypeId != null) {
-            if (testTypeId < 1) {
-                throw invalid("검사 유형 ID는 양수여야 합니다.");
-            }
-            where.append(" AND EXISTS(SELECT 1 FROM visit_tests t WHERE t.visit_id=v.id AND t.test_type_id=?)");
-            args.add(testTypeId);
-        }
-        if (fromDate != null) {
-            where.append(" AND v.visit_date>=?");
-            args.add(fromDate);
-        }
-        if (toDate != null) {
-            where.append(" AND v.visit_date<=?");
-            args.add(toDate);
-        }
-        long total = jdbc.queryForObject("SELECT COUNT(*)" + where, Long.class, args.toArray());
-        args.add(size);
-        args.add((long) page * size);
-        List<Long> ids = jdbc.query("SELECT v.id" + where + " ORDER BY v.visit_date DESC,v.id DESC LIMIT ? OFFSET ?", (rs, n) -> rs.getLong(1), args.toArray());
-        return fields("content", ids.stream().map(this::view).toList(), "page", page, "size", size,
-                "totalElements", total, "totalPages", (total + size - 1) / size);
+        Page<Visit> result = visits.search(placeId, dongId, organizationId, serviceCode, testTypeId,
+                fromDate, toDate, PageRequest.of(page, size));
+        return fields("content", result.getContent().stream().map(this::mapView).toList(), "page", page, "size", size,
+                "totalElements", result.getTotalElements(), "totalPages", (long) result.getTotalPages());
     }
 }

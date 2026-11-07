@@ -1,6 +1,6 @@
 # ANBU Backend
 
-기관 간 방문 기록과 검사 요청을 공유하는 Spring Boot REST API입니다. Java 21, Spring Boot 3.5.16, Spring Security, Spring JDBC, Flyway를 사용합니다. 날짜 기준은 Asia/Seoul입니다.
+기관 간 방문 기록과 검사 요청을 공유하는 Spring Boot REST API입니다. Java 21, Spring Boot 3.5.16, Spring Security, Spring Data JPA(Hibernate), Flyway를 사용합니다. 날짜 기준은 Asia/Seoul입니다.
 
 구현 기준은 2026-11-08 확인한 안부 API 명세서입니다. 우선순위·추천 조회는 후속 구현 범위로 남겨두었습니다. [Notion 명세서](https://www.notion.so/4112a8e848a480a0bcabc40cb7655b73)
 
@@ -35,6 +35,12 @@ java -jar build/libs/anbu-0.1.0.jar
 ```
 
 `PORT`의 기본값은 8080입니다. `ANBU_CORS_ORIGINS`는 허용할 프런트엔드 origin을 쉼표로 구분하며 기본값은 `http://localhost:3000,http://localhost:5173`입니다.
+
+## 코드 구조
+
+컨트롤러는 HTTP 요청·응답을 처리하고, 서비스는 권한·업무 규칙·트랜잭션을 담당합니다. `kr.anbu.persistence.entity`는 Flyway 테이블에 대응하는 JPA 엔티티, `kr.anbu.persistence.repository`는 저장·조회·잠금과 JPQL/native 집계 쿼리를 모은 영속성 계층입니다. 서비스와 컨트롤러에는 쿼리를 작성하지 않습니다.
+
+스키마 변경은 Flyway가 담당하며 Hibernate는 `ddl-auto=validate`로 매핑을 검증합니다. `open-in-view=false`이므로 데이터 접근은 서비스 트랜잭션 안에서 완료됩니다.
 
 ## 인증과 응답
 
@@ -120,4 +126,4 @@ ID는 기준 조회 API에서 선택합니다. 시연 데이터의 첫 검사 �
 bash ./gradlew clean test bootJar
 ```
 
-테스트는 H2의 PostgreSQL 호환 모드에서 인증·만료, 기관 권한, 부분 처리, 중복 처리, 실제 제공량 초과, 동시 계획 선점, 동시 실적 배분, 일괄 롤백, 연결 방문 보호, 지도 공백 경계, 서비스별 이력, 기준 설정을 확인합니다.
+테스트는 H2의 PostgreSQL 호환 모드에서 인증·만료, 기관 권한, 부분 처리, 중복 처리, 실제 제공량 초과, 동시 계획 선점, 동시 실적 배분, 일괄 롤백, 연결 방문 보호, 지도 공백 경계, 서비스별 이력, 기준 설정을 확인합니다. JPA 전환 회귀 테스트는 방문 자식 데이터의 복합키 교체·삭제, 잔여 건수 정렬·페이지 계산, 월 경계와 기관별 완료 통계도 검증합니다.
