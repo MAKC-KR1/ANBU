@@ -33,3 +33,19 @@ java -jar build/libs/anbu-0.1.0.jar --spring.profiles.active=prod
 웹과 API가 다른 origin에 있다면 웹 빌드 전에 `VITE_API_BASE`를 전체 API 주소로 지정합니다. 역방향 프록시를 사용하는 경우에도 `ANBU_CORS_ORIGINS`에는 사용자가 접속하는 웹 origin을 넣습니다.
 
 배포 후 API 연결 확인은 로그인 없이 `/api/v1/dongs`를 호출해 `401`이 반환되는지 검사합니다. 웹에서 로그인한 뒤 안산 지도와 시설 상세가 표시되는지 확인합니다. 시험용 계정 두 개로 방문 예약, 방문 기록 저장, 기관 지정 연계 요청과 수신 계정의 앱 알림을 확인합니다.
+
+## Vercel과 Supabase
+
+Vercel 프로젝트에서 저장소 루트를 선택하고 Framework Preset을 **Services**로 설정합니다. `vercel.json`은 `frontend`의 Vite 빌드와 루트 `Dockerfile`의 Java 21 API를 같은 주소에서 제공하며, `/api/v1/` 요청을 API로 전달합니다. Vercel 프로젝트의 Node.js 버전은 22.12 이상으로 지정합니다.
+
+Vercel 운영 환경에 위 표의 변수와 `PORT=8080`을 설정합니다. 운영 컨테이너는 `prod` 프로필로 실행합니다. `ANBU_CORS_ORIGINS`에는 경로 없이 실제 운영 웹 주소를 설정합니다. 예를 들어 운영 주소가 `https://anbu-example.vercel.app`이면 `ANBU_CORS_ORIGINS=https://anbu-example.vercel.app`을 설정합니다.
+
+Supabase에서 전용 로그인 역할과 해당 역할이 소유하는 `anbu` 스키마를 생성하고 Data API를 끕니다. **Connect → Session pooler**에서 호스트와 프로젝트 참조 값을 확인합니다. JDBC URL은 `jdbc:postgresql://<pooler-host>:5432/postgres?currentSchema=anbu&sslmode=require` 형식입니다. `ANBU_DB_USERNAME`에 `<app-role>.<project-ref>`를, `ANBU_DB_PASSWORD`에 전용 역할의 비밀번호를 설정하고 `SPRING_FLYWAY_DEFAULT_SCHEMA=anbu`를 지정합니다.
+
+Vercel의 첫 운영 배포 전에 접근이 제한된 실행 환경 한 곳에서 Supabase 연결 변수를 주입하고 아래 명령을 한 번 실행합니다. 로그에서 Flyway 마이그레이션과 안산 지도 적재가 완료된 것을 확인한 뒤 종료합니다.
+
+```sh
+SERVER_ADDRESS=127.0.0.1 java -jar build/libs/anbu-0.1.0.jar --spring.profiles.active=prod,ansan-map
+```
+
+초기 적재 후 운영 접속을 검증할 두 기관에 각각 `STAFF` 시험 계정을 생성합니다. `organizations`, `users`와 필요한 담당 동을 `organization_dongs`에 등록합니다. 비밀번호는 계정별로 발급하고 BCrypt 해시만 저장합니다. 검사를 `test_types`에 등록하고 수신 기관의 제공 권한을 `test_type_organizations`에 추가한 뒤 운영 배포를 진행합니다.
