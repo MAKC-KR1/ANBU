@@ -1,6 +1,5 @@
 package kr.anbu.map;
 
-import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -12,11 +11,13 @@ import java.util.Map;
 import java.util.Set;
 import kr.anbu.auth.Actor;
 import kr.anbu.common.ApiException;
+import kr.anbu.persistence.repository.MapQueryRepository;
+import kr.anbu.persistence.repository.MapQueryRepository.PlaceRow;
+import kr.anbu.persistence.repository.MapQueryRepository.RequestTotals;
+import kr.anbu.persistence.repository.MapQueryRepository.VisitHistoryRow;
 import kr.anbu.requests.RequestService;
 import kr.anbu.reference.VisitCycleService;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MapService {
     private static final List<String> SERVICES = List.of("A", "B", "C", "D");
     private static final Set<String> GAP_LEVELS = Set.of("RECENT", "WARNING", "LONG_GAP", "NO_RECORD");
-    private final JdbcTemplate jdbc;
+    private final MapQueryRepository mapQueries;
     private final RequestService requests;
     private final VisitCycleService visitCycles;
     private final Clock clock;
 
-    public MapService(JdbcTemplate jdbc, RequestService requests, VisitCycleService visitCycles, Clock clock) {
-        this.jdbc = jdbc;
+    public MapService(MapQueryRepository mapQueries, RequestService requests, VisitCycleService visitCycles, Clock clock) {
+        this.mapQueries = mapQueries;
         this.requests = requests;
         this.visitCycles = visitCycles;
         this.clock = clock;
@@ -48,10 +49,11 @@ public class MapService {
         }
         LocalDate today = LocalDate.now(clock);
         Map<String, Integer> cycles = visitCycles.cycles(Actor.current().organizationId());
-        Map<Long, Map<String, LocalDate>> dates = serviceDates(today);
-        Map<Long, LocalDate> latest = latestDates(today);
-        Map<Long, RequestTotals> totals = requestTotals();
-        return registeredPlaces().stream()
+        Map<Long, Map<String, LocalDate>> dates = mapQueries.findLatestServiceDates(today);
+        Map<Long, LocalDate> latest = mapQueries.findLatestVisitDates(today);
+        Map<Long, RequestTotals> totals = mapQueries.findRequestTotals();
+        return mapQueries.findRegisteredPlaces().stream()
+                .map(this::placeView)
                 .filter(place -> dongId == null || place.dongId() == dongId)
                 .map(place -> marker(place, serviceCode, dates, latest, totals, cycles, today))
                 .filter(marker -> gapLevel == null || marker.gapLevel().equals(gapLevel))
@@ -63,12 +65,12 @@ public class MapService {
         if (historyLimit < 1 || historyLimit > 50) {
             throw invalid("historyLimit는 1~50이어야 합니다.");
         }
-        Place place = registeredPlaces().stream().filter(item -> item.id() == placeId).findFirst()
+        Place place = mapQueries.findPlace(placeId).map(this::placeView)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "NOT_FOUND", "장소를 찾을 수 없습니다."));
         LocalDate today = LocalDate.now(clock);
         Map<String, Integer> cycles = visitCycles.cycles(Actor.current().organizationId());
-        Map<String, LocalDate> lastByService = serviceDates(today).getOrDefault(placeId, Map.of());
-        LocalDate latest = latestDates(today).get(placeId);
+        Map<String, LocalDate> lastByService = mapQueries.findLatestServiceDates(today).getOrDefault(placeId, Map.of());
+        LocalDate latest = mapQueries.findLatestVisitDates(today).get(placeId);
         Map<String, List<HistoryVisit>> histories = histories(placeId, historyLimit, today);
         List<ServiceHistory> historyByService = SERVICES.stream().map(code -> {
             LocalDate lastDate = lastByService.get(code);
@@ -76,7 +78,7 @@ public class MapService {
             return new ServiceHistory(code, lastDate, gapLevel(lastDate, today), cycleDays,
                     isOverdue(lastDate, cycleDays, today), histories.get(code));
         }).toList();
-        RequestTotals totals = requestTotals().getOrDefault(placeId, RequestTotals.EMPTY);
+        RequestTotals totals = mapQueries.findRequestTotals().getOrDefault(placeId, RequestTotals.EMPTY);
         return new Summary(place, latest, gapLevel(latest, today), historyByService,
                 requests.placeRequests(placeId), totals.outstandingRequestCount(), totals.outstandingRequestedCount());
     }
@@ -96,96 +98,32 @@ public class MapService {
                 counts.outstandingRequestCount(), counts.outstandingRequestedCount());
     }
 
-    private List<Place> registeredPlaces() {
-        return jdbc.query("""
-                SELECT p.id, p.name, p.dong_id, d.name AS dong_name, p.address,
-                       p.latitude, p.longitude, p.nearest_clinic_km
-                FROM places p JOIN dongs d ON d.id = p.dong_id ORDER BY p.id
-                """, (rs, row) -> new Place(rs.getLong("id"), rs.getString("name"), rs.getLong("dong_id"),
-                rs.getString("dong_name"), rs.getString("address"), rs.getObject("latitude", Double.class),
-                rs.getObject("longitude", Double.class), rs.getObject("nearest_clinic_km", Double.class)));
-    }
-
-    private Map<Long, Map<String, LocalDate>> serviceDates(LocalDate today) {
-        Map<Long, Map<String, LocalDate>> dates = new HashMap<>();
-        jdbc.query("""
-                SELECT v.place_id, s.service_code, MAX(v.visit_date) AS last_date
-                FROM visits v JOIN visit_services s ON s.visit_id = v.id
-                WHERE v.visit_date <= ? GROUP BY v.place_id, s.service_code
-                """, rs -> {
-            dates.computeIfAbsent(rs.getLong("place_id"), ignored -> new HashMap<>())
-                    .put(rs.getString("service_code"), rs.getDate("last_date").toLocalDate());
-        }, Date.valueOf(today));
-        return dates;
-    }
-
-    private Map<Long, LocalDate> latestDates(LocalDate today) {
-        Map<Long, LocalDate> dates = new HashMap<>();
-        jdbc.query("""
-                SELECT place_id, MAX(visit_date) AS last_date FROM visits
-                WHERE visit_date <= ? GROUP BY place_id
-                """, rs -> {
-            dates.put(rs.getLong("place_id"), rs.getDate("last_date").toLocalDate());
-        }, Date.valueOf(today));
-        return dates;
-    }
-
-    private Map<Long, RequestTotals> requestTotals() {
-        Map<Long, RequestTotals> totals = new HashMap<>();
-        jdbc.query("""
-                SELECT r.place_id,
-                       SUM(CASE WHEN r.status = 'PENDING' THEN 1 ELSE 0 END) AS pending_requests,
-                       SUM(CASE WHEN r.status = 'PENDING'
-                           THEN r.requested_count - COALESCE(f.completed, 0) ELSE 0 END) AS pending_count,
-                       COUNT(*) AS outstanding_requests,
-                       SUM(r.requested_count - COALESCE(f.completed, 0)) AS outstanding_count
-                FROM test_requests r
-                LEFT JOIN (SELECT request_id, SUM(completed_count) AS completed
-                           FROM request_fulfillments GROUP BY request_id) f ON f.request_id = r.id
-                WHERE r.status IN ('PENDING', 'PLANNED') GROUP BY r.place_id
-                """, rs -> {
-            totals.put(rs.getLong("place_id"), new RequestTotals(rs.getLong("pending_requests"),
-                    rs.getLong("pending_count"), rs.getLong("outstanding_requests"), rs.getLong("outstanding_count")));
-        });
-        return totals;
+    private Place placeView(PlaceRow place) {
+        return new Place(place.id(), place.name(), place.dongId(), place.dongName(), place.address(),
+                place.latitude(), place.longitude(), place.nearestClinicKm());
     }
 
     private Map<String, List<HistoryVisit>> histories(long placeId, int limit, LocalDate today) {
-        Map<String, List<VisitRow>> visits = new LinkedHashMap<>();
+        Map<String, List<VisitHistoryRow>> visits = new LinkedHashMap<>();
         for (String code : SERVICES) {
-            visits.put(code, jdbc.query("""
-                    SELECT v.id, v.visit_date, o.id AS organization_id, o.name AS organization_name
-                    FROM visits v JOIN visit_services s ON s.visit_id = v.id
-                    JOIN organizations o ON o.id = v.organization_id
-                    WHERE v.place_id = ? AND s.service_code = ? AND v.visit_date <= ?
-                    ORDER BY v.visit_date DESC, v.id DESC LIMIT ?
-                    """, (rs, row) -> new VisitRow(rs.getLong("id"), rs.getDate("visit_date").toLocalDate(),
-                    new Organization(rs.getLong("organization_id"), rs.getString("organization_name"))),
-                    placeId, code, Date.valueOf(today), limit));
+            visits.put(code, mapQueries.findServiceHistory(placeId, code, today, limit));
         }
-        List<Long> visitIds = visits.values().stream().flatMap(List::stream).map(VisitRow::id).distinct().toList();
+        List<Long> visitIds = visits.values().stream().flatMap(List::stream).map(VisitHistoryRow::id).distinct().toList();
         Map<Long, Map<String, List<PerformedTest>>> tests = performedTests(visitIds);
         Map<String, List<HistoryVisit>> result = new LinkedHashMap<>();
         visits.forEach((code, rows) -> result.put(code, rows.stream().map(visit -> new HistoryVisit(
-                visit.id(), visit.date(), visit.organization(),
+                visit.id(), visit.visitDate(), new Organization(visit.organizationId(), visit.organizationName()),
                 tests.getOrDefault(visit.id(), Map.of()).getOrDefault(code, List.of()))).toList()));
         return result;
     }
 
     private Map<Long, Map<String, List<PerformedTest>>> performedTests(List<Long> visitIds) {
         Map<Long, Map<String, List<PerformedTest>>> result = new HashMap<>();
-        if (visitIds.isEmpty()) {
-            return result;
+        for (var test : mapQueries.findPerformedTests(visitIds)) {
+            result.computeIfAbsent(test.visitId(), ignored -> new HashMap<>())
+                    .computeIfAbsent(test.serviceCode(), ignored -> new ArrayList<>())
+                    .add(new PerformedTest(test.testTypeId(), test.name(), test.count()));
         }
-        new NamedParameterJdbcTemplate(jdbc).query("""
-                SELECT v.visit_id, t.id, t.name, t.service_code, v.test_count
-                FROM visit_tests v JOIN test_types t ON t.id = v.test_type_id
-                WHERE v.visit_id IN (:visitIds) ORDER BY t.id
-                """, Map.of("visitIds", visitIds), rs -> {
-            result.computeIfAbsent(rs.getLong("visit_id"), ignored -> new HashMap<>())
-                    .computeIfAbsent(rs.getString("service_code"), ignored -> new ArrayList<>())
-                    .add(new PerformedTest(rs.getLong("id"), rs.getString("name"), rs.getInt("test_count")));
-        });
         return result;
     }
 
@@ -240,10 +178,4 @@ public class MapService {
 
     public record PerformedTest(long testTypeId, String name, int count) {}
 
-    private record VisitRow(long id, LocalDate date, Organization organization) {}
-
-    private record RequestTotals(long pendingRequestCount, long pendingRequestedCount,
-            long outstandingRequestCount, long outstandingRequestedCount) {
-        private static final RequestTotals EMPTY = new RequestTotals(0, 0, 0, 0);
-    }
 }
