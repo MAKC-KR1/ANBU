@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: anbu
+  datasource:
+    url: ${ANBU_DB_URL:jdbc:h2:file:./data/anbu;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH}
+    username: ${ANBU_DB_USERNAME:sa}
+    password: ${ANBU_DB_PASSWORD:}
+  jackson:
+    time-zone: Asia/Seoul
+    deserialization:
+      accept-float-as-int: false
+      fail-on-unknown-properties: true
+  mvc:
+    problemdetails:
+      enabled: false
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+anbu:
+  cors-origins: ${ANBU_CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
