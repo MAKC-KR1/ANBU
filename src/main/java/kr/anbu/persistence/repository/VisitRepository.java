@@ -9,9 +9,13 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 public interface VisitRepository extends JpaRepository<Visit, Long> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Visit> findFirstByCreatedByAndCreatedAtOrderByIdAsc(Long createdBy, OffsetDateTime createdAt);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select v from Visit v where v.id = :id")
     Optional<Visit> findLockedById(@Param("id") Long id);

@@ -1,0 +1,2 @@
+ALTER TABLE places ADD COLUMN place_type VARCHAR(30)
+    CHECK (place_type IN ('SENIOR_CENTER', 'VILLAGE_HALL', 'OTHER'));

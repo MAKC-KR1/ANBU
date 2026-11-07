@@ -9,7 +9,15 @@ import java.util.List;
 
 public interface RequestFulfillmentRepository extends JpaRepository<RequestFulfillment, RequestFulfillment.Key> {
     boolean existsByVisitId(Long visitId);
-    List<RequestFulfillment> findByVisitIdOrderByRequestIdAsc(Long visitId);
+    @Query("""
+            select f from RequestFulfillment f join TestRequest r on r.id = f.requestId
+            where f.visitId = :visitId
+              and (r.recipientOrganizationId is null or r.recipientOrganizationId = :organizationId
+                   or r.requestedByOrganizationId = :organizationId)
+            order by f.requestId
+            """)
+    List<RequestFulfillment> findVisibleForVisit(@Param("visitId") Long visitId,
+                                                 @Param("organizationId") Long organizationId);
 
     @Query("select coalesce(sum(f.completedCount),0) from RequestFulfillment f where f.requestId = :requestId")
     long sumCompletedByRequestId(@Param("requestId") Long requestId);

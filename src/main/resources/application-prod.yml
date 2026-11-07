@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${ANBU_DB_URL}
+    username: ${ANBU_DB_USERNAME}
+    password: ${ANBU_DB_PASSWORD}
+anbu:
+  cors-origins: ${ANBU_CORS_ORIGINS:}

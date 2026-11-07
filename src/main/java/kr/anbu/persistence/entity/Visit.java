@@ -2,6 +2,7 @@ package kr.anbu.persistence.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -11,6 +12,9 @@ public class Visit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate visitDate;
+    private LocalTime visitTime;
+    @Column(length = 16)
+    private String resultCode;
     private Long placeId;
     private Long organizationId;
     private Long createdBy;
@@ -36,6 +40,14 @@ public class Visit {
     public void setVisitDate(LocalDate visitDate) {
         this.visitDate = visitDate;
     }
+
+    public LocalTime getVisitTime() { return visitTime; }
+
+    public void setVisitTime(LocalTime visitTime) { this.visitTime = visitTime; }
+
+    public String getResultCode() { return resultCode; }
+
+    public void setResultCode(String resultCode) { this.resultCode = resultCode; }
 
     public Long getPlaceId() {
         return placeId;

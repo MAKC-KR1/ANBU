@@ -35,6 +35,7 @@ public class VisitService {
     private final PlaceRepository places;
     private final TestTypeRepository testTypes;
     private final OrganizationRepository organizations;
+    private final UserAccountRepository users;
     private final RequestService requests;
     private final ObjectMapper mapper;
     private final Validator validator;
@@ -43,6 +44,7 @@ public class VisitService {
     public VisitService(VisitRepository visits, VisitServiceCodeRepository serviceCodes, VisitTestRepository visitTests,
                         TestRequestRepository testRequests, RequestFulfillmentRepository fulfillments,
                         PlaceRepository places, TestTypeRepository testTypes, OrganizationRepository organizations,
+                        UserAccountRepository users,
                         RequestService requests, ObjectMapper mapper, Validator validator, Clock clock) {
         this.visits = visits;
         this.serviceCodes = serviceCodes;
@@ -52,6 +54,7 @@ public class VisitService {
         this.places = places;
         this.testTypes = testTypes;
         this.organizations = organizations;
+        this.users = users;
         this.requests = requests;
         this.mapper = mapper;
         this.validator = validator;
@@ -63,10 +66,12 @@ public class VisitService {
         validate(input);
         long organizationId = Actor.current().organizationId();
         validatePlace(input.placeId());
-        Map<Long, Integer> performed = testCounts(input.performedTests(), input.serviceCodes(), true);
-        Map<Long, Integer> requested = testCounts(input.requestedTests(), input.serviceCodes(), false);
+        Map<Long, Integer> performed = performedCounts(input.performedTests(), input.serviceCodes());
+        Map<RequestTarget, RequestedCount> requested = requestedCounts(input.requestedTests(), organizationId);
         Visit visit = new Visit();
         visit.setVisitDate(input.visitDate());
+        visit.setVisitTime(input.visitTime());
+        visit.setResultCode(input.resultCode());
         visit.setPlaceId(input.placeId());
         visit.setOrganizationId(organizationId);
         visit.setCreatedBy(Actor.current().id());
@@ -79,10 +84,12 @@ public class VisitService {
             TestRequest request = new TestRequest();
             request.setSourceVisitId(visitId);
             request.setPlaceId(input.placeId());
-            request.setTestTypeId(test.getKey());
-            request.setRequestedCount(test.getValue());
+            request.setTestTypeId(test.getKey().testTypeId());
+            request.setRequestedCount(test.getValue().count());
             request.setRequestedDate(input.visitDate());
             request.setRequestedByOrganizationId(organizationId);
+            request.setRecipientOrganizationId(test.getKey().recipientOrganizationId());
+            request.setNote(test.getValue().note());
             request.setStatus("PENDING");
             request.setCreatedAt(OffsetDateTime.now(clock));
             requestIds.add(testRequests.saveAndFlush(request).getId());
@@ -139,24 +146,61 @@ public class VisitService {
         }
     }
 
-    private Map<Long, Integer> testCounts(List<VisitInput.TestCount> tests, List<String> services, boolean performed) {
+    private Map<Long, Integer> performedCounts(List<VisitInput.TestCount> tests, List<String> services) {
         Map<Long, Integer> counts = new TreeMap<>();
         for (var test : tests) {
             TestType type = testTypes.findById(test.testTypeId()).orElseThrow(RequestService::missing);
-            if (performed && !services.contains(type.getServiceCode())) {
+            if (test.recipientOrganizationId() != null || test.note() != null) {
+                throw invalid("받을 기관과 전달 메모는 연계 요청에만 입력할 수 있습니다.");
+            }
+            if (!services.contains(type.getServiceCode())) {
                 throw invalid("제공 검사의 서비스 유형을 선택해 주세요.");
             }
-            if (performed && !requests.capable(test.testTypeId(), Actor.current().organizationId())) {
+            if (!requests.capable(test.testTypeId(), Actor.current().organizationId())) {
                 throw forbidden();
             }
-            try {
-                counts.merge(test.testTypeId(), test.count(), Math::addExact);
-            } catch (ArithmeticException ex) {
-                throw invalid("검사 건수가 허용 범위를 초과합니다.");
-            }
+            counts.merge(test.testTypeId(), test.count(), VisitService::addCounts);
         }
         return counts;
     }
+
+    private Map<RequestTarget, RequestedCount> requestedCounts(List<VisitInput.TestCount> tests, long sender) {
+        Map<RequestTarget, RequestedCount> counts = new TreeMap<>(Comparator.comparingLong(RequestTarget::testTypeId)
+                .thenComparing(RequestTarget::recipientOrganizationId, Comparator.nullsFirst(Comparator.naturalOrder())));
+        for (var test : tests) {
+            if (!testTypes.existsById(test.testTypeId())) {
+                throw missing();
+            }
+            Long recipient = test.recipientOrganizationId();
+            String note = test.note() == null || test.note().isBlank() ? null : test.note().strip();
+            if (recipient != null && (recipient == sender || !requests.capable(test.testTypeId(), recipient)
+                    || !users.existsByOrganizationId(recipient))) {
+                throw invalid("선택한 검사 요청을 받을 수 있는 다른 기관을 선택해 주세요.");
+            }
+            if (recipient == null && note != null) {
+                throw invalid("전달 메모를 받는 기관을 선택해 주세요.");
+            }
+            counts.merge(new RequestTarget(test.testTypeId(), recipient), new RequestedCount(test.count(), note),
+                    (existing, added) -> {
+                        if (!Objects.equals(existing.note(), added.note())) {
+                            throw invalid("같은 검사와 기관의 요청에는 전달 메모를 하나만 입력해 주세요.");
+                        }
+                        return new RequestedCount(addCounts(existing.count(), added.count()), existing.note());
+                    });
+        }
+        return counts;
+    }
+
+    private static int addCounts(int existing, int added) {
+        try {
+            return Math.addExact(existing, added);
+        } catch (ArithmeticException ex) {
+            throw invalid("검사 건수가 허용 범위를 초과합니다.");
+        }
+    }
+
+    private record RequestTarget(Long testTypeId, Long recipientOrganizationId) {}
+    private record RequestedCount(int count, String note) {}
 
     private void saveServicesAndTests(long id, List<String> services, Map<Long, Integer> tests) {
         for (String service : services) {
@@ -194,7 +238,7 @@ public class VisitService {
     @Transactional
     public Map<String, Object> update(long id, JsonNode patch) {
         Visit visit = ownLockedVisit(id);
-        Set<String> allowed = Set.of("visitDate", "placeId", "serviceCodes", "performedTests", "memo");
+        Set<String> allowed = Set.of("visitDate", "visitTime", "resultCode", "placeId", "serviceCodes", "performedTests", "memo");
         if (!patch.isObject() || patch.isEmpty()) {
             throw invalid("수정할 필드를 입력해 주세요.");
         }
@@ -237,8 +281,10 @@ public class VisitService {
         }
         validate(updated);
         validatePlace(updated.placeId());
-        Map<Long, Integer> tests = testCounts(updated.performedTests(), updated.serviceCodes(), true);
+        Map<Long, Integer> tests = performedCounts(updated.performedTests(), updated.serviceCodes());
         visit.setVisitDate(updated.visitDate());
+        visit.setVisitTime(updated.visitTime());
+        visit.setResultCode(updated.resultCode());
         visit.setPlaceId(updated.placeId());
         visit.setMemo(updated.memo());
         visit.setUpdatedAt(now);
@@ -275,15 +321,17 @@ public class VisitService {
 
     private Map<String, Object> mapView(Visit visit) {
         long id = visit.getId();
+        long viewerOrganizationId = Actor.current().organizationId();
         Organization organization = organizations.findById(visit.getOrganizationId()).orElseThrow(RequestService::missing);
         return fields("visitId", id, "placeId", visit.getPlaceId(),
                 "organization", fields("id", organization.getId(), "name", organization.getName()),
-                "visitDate", visit.getVisitDate(), "memo", visit.getMemo(),
+                "visitDate", visit.getVisitDate(), "visitTime", visit.getVisitTime(), "resultCode", visit.getResultCode(),
+                "memo", visit.getMemo(),
                 "createdAt", visit.getCreatedAt(), "updatedAt", visit.getUpdatedAt(),
                 "serviceCodes", serviceCodes.findByVisitIdOrderByServiceCodeAsc(id).stream().map(VisitServiceCode::getServiceCode).toList(),
                 "performedTests", visitTests.findByVisitIdOrderByTestTypeIdAsc(id).stream().map(this::testView).toList(),
-                "createdRequestIds", testRequests.findBySourceVisitIdOrderByIdAsc(id).stream().map(TestRequest::getId).toList(),
-                "fulfillments", fulfillments.findByVisitIdOrderByRequestIdAsc(id).stream()
+                "createdRequestIds", testRequests.findVisibleIdsForVisit(id, viewerOrganizationId),
+                "fulfillments", fulfillments.findVisibleForVisit(id, viewerOrganizationId).stream()
                         .map(fulfillment -> fields("requestId", fulfillment.getRequestId(), "completedCount", fulfillment.getCompletedCount())).toList());
     }
 

@@ -67,8 +67,10 @@ public class DemoData implements ApplicationRunner {
         long welfare = organizations.save(new Organization("시연 복지관", "WELFARE_CENTER")).getId();
         long dong = dongs.save(new Dong("시연동", "시연구")).getId();
         managedDongs.saveAll(List.of(new OrganizationDong(health, dong), new OrganizationDong(welfare, dong)));
-        places.save(new Place("시연 경로당", dong, "시연용 주소 (실제 시설 아님)",
-                new BigDecimal("37.3219"), new BigDecimal("126.8309")));
+        Place seniorCenter = new Place("시연 경로당", dong, "시연용 주소 (실제 시설 아님)",
+                new BigDecimal("37.3219"), new BigDecimal("126.8309"));
+        seniorCenter.setPlaceType("SENIOR_CENTER");
+        places.save(seniorCenter);
         long testType = testTypes.save(new TestType("시연 건강검사", "B")).getId();
         capabilities.save(new TestTypeOrganization(testType, health));
         String hash = passwords.encode(password);
