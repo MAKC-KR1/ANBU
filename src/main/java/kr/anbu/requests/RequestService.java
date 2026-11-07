@@ -78,6 +78,31 @@ public class RequestService {
         return capabilities.existsByTestTypeIdAndOrganizationId(testTypeId, organizationId);
     }
 
+    private boolean canReceive(TestRequest request, long organizationId) {
+        return (request.getRecipientOrganizationId() == null || request.getRecipientOrganizationId() == organizationId)
+                && capable(request.getTestTypeId(), organizationId);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> unreadCount() {
+        Actor actor = Actor.current();
+        return fields("count", requests.countUnread(actor.organizationId(), actor.id()));
+    }
+
+    @Transactional
+    public Map<String, Object> markRead(long requestId) {
+        validateId(requestId);
+        Actor actor = Actor.current();
+        TestRequest request = requests.findLockedById(requestId).orElseThrow(RequestService::missing);
+        if (!Objects.equals(request.getRecipientOrganizationId(), actor.organizationId())) {
+            throw missing();
+        }
+        // Locking the request makes repeated or concurrent acknowledgements safe.
+        requests.insertReadReceipt(requestId, actor.id());
+        return fields("requestId", requestId, "unread", false,
+                "count", requests.countUnread(actor.organizationId(), actor.id()));
+    }
+
     @Transactional
     public Map<String, Object> plan(long id, LocalDate plannedDate) {
         if (plannedDate == null || plannedDate.isBefore(today())) {
@@ -85,7 +110,7 @@ public class RequestService {
         }
         TestRequest request = requests.findLockedById(id).orElseThrow(RequestService::missing);
         long organizationId = Actor.current().organizationId();
-        if (!capable(request.getTestTypeId(), organizationId)) {
+        if (!canReceive(request, organizationId)) {
             throw forbidden();
         }
         if (request.getStatus().equals("DONE") || (request.getPlannedOrganizationId() != null
@@ -102,10 +127,14 @@ public class RequestService {
     @Transactional
     public Map<String, Object> unplan(long id) {
         TestRequest request = requests.findLockedById(id).orElseThrow(RequestService::missing);
+        long organizationId = Actor.current().organizationId();
+        if (request.getRecipientOrganizationId() != null && request.getRecipientOrganizationId() != organizationId) {
+            throw forbidden();
+        }
         if (!request.getStatus().equals("PLANNED")) {
             throw conflict("방문 예정 상태에서만 취소할 수 있습니다.");
         }
-        if (!Objects.equals(request.getPlannedOrganizationId(), Actor.current().organizationId())) {
+        if (!Objects.equals(request.getPlannedOrganizationId(), organizationId)) {
             throw forbidden();
         }
         request.setStatus("PENDING");
@@ -133,7 +162,7 @@ public class RequestService {
         Visit visit = visits.findLockedById(visitId).orElseThrow(RequestService::missing);
         TestRequest request = requests.findLockedById(requestId).orElseThrow(RequestService::missing);
         long organizationId = Actor.current().organizationId();
-        if (!Objects.equals(visit.getOrganizationId(), organizationId) || !capable(request.getTestTypeId(), organizationId)) {
+        if (!Objects.equals(visit.getOrganizationId(), organizationId) || !canReceive(request, organizationId)) {
             throw forbidden();
         }
         if (request.getStatus().equals("PLANNED") && !Objects.equals(request.getPlannedOrganizationId(), organizationId)) {
@@ -189,13 +218,14 @@ public class RequestService {
         Place place = places.findById(request.getPlaceId()).orElseThrow(RequestService::missing);
         Dong dong = dongs.findById(place.getDongId()).orElseThrow(RequestService::missing);
         TestType type = testTypes.findById(request.getTestTypeId()).orElseThrow(RequestService::missing);
-        return fields("requestId", request.getId(),
+        return fields("requestId", request.getId(), "sourceVisitId", request.getSourceVisitId(),
                 "place", fields("id", place.getId(), "name", place.getName(), "dongId", dong.getId(), "dongName", dong.getName()),
                 "testType", fields("id", type.getId(), "name", type.getName(), "serviceCode", type.getServiceCode()),
                 "requestedCount", requested, "completedCount", completed, "remainingCount", requested - completed,
                 "isPartiallyFulfilled", completed > 0 && completed < requested, "requestedDate", request.getRequestedDate(),
                 "daysPending", done ? null : ChronoUnit.DAYS.between(request.getRequestedDate(), today()),
                 "requestedByOrganization", organization(request.getRequestedByOrganizationId()),
+                "recipientOrganization", organization(request.getRecipientOrganizationId()), "note", request.getNote(),
                 "status", request.getStatus(), "plannedOrganization", organization(request.getPlannedOrganizationId()),
                 "plannedDate", request.getPlannedDate(), "completedDate", completedDate,
                 "daysToComplete", completedDate == null ? null : ChronoUnit.DAYS.between(request.getRequestedDate(), completedDate));
@@ -203,18 +233,25 @@ public class RequestService {
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public Map<String, Object> view(long id) {
-        return mapView(requests.findById(id).orElseThrow(RequestService::missing));
+        TestRequest request = requests.findById(id).orElseThrow(RequestService::missing);
+        if (request.getRecipientOrganizationId() != null) {
+            long organizationId = Actor.current().organizationId();
+            if (request.getRecipientOrganizationId() != organizationId && request.getRequestedByOrganizationId() != organizationId) {
+                throw missing();
+            }
+        }
+        return mapView(request);
     }
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public List<Map<String, Object>> placeRequests(long placeId) {
         List<Map<String, Object>> items = new ArrayList<>();
         long organizationId = Actor.current().organizationId();
-        for (TestRequest request : requests.findForPlaceSummary(placeId, today().minusDays(30))) {
+        for (TestRequest request : requests.findForPlaceSummary(placeId, today().minusDays(30), organizationId)) {
             Map<String, Object> item = mapView(request);
             item.put("fulfillments", fulfillments.findByRequestId(request.getId()).stream()
                     .map(this::fulfillmentView).toList());
-            item.put("assignableToMe", !request.getStatus().equals("DONE") && capable(request.getTestTypeId(), organizationId)
+            item.put("assignableToMe", !request.getStatus().equals("DONE") && canReceive(request, organizationId)
                     && (request.getPlannedOrganizationId() == null || request.getPlannedOrganizationId() == organizationId));
             items.add(item);
         }
@@ -230,6 +267,12 @@ public class RequestService {
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public Map<String, Object> list(boolean assignable, String statuses, Long dongId, Long placeId,
                                     Long testTypeId, String sort, int page, int size) {
+        return list(assignable, statuses, dongId, placeId, testTypeId, sort, page, size, "all");
+    }
+
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    public Map<String, Object> list(boolean assignable, String statuses, Long dongId, Long placeId,
+                                    Long testTypeId, String sort, int page, int size, String direction) {
         validatePage(page, size);
         validateId(dongId);
         validateId(placeId);
@@ -241,9 +284,23 @@ public class RequestService {
         if (!Set.of("oldest", "count").contains(sort)) {
             throw invalid("정렬 값이 올바르지 않습니다.");
         }
-        Page<TestRequest> result = requests.search(assignable, Actor.current().organizationId(), statusList,
-                dongId, placeId, testTypeId, sort.equals("count"), PageRequest.of(page, size));
-        return fields("content", result.getContent().stream().map(this::mapView).toList(),
+        if (!Set.of("all", "incoming", "outgoing").contains(direction)) {
+            throw invalid("요청함 구분이 올바르지 않습니다.");
+        }
+        Actor actor = Actor.current();
+        Page<TestRequest> result = requests.search(assignable, actor.organizationId(), statusList,
+                dongId, placeId, testTypeId, sort.equals("count"), direction, PageRequest.of(page, size));
+        List<Long> incomingIds = result.getContent().stream()
+                .filter(request -> Objects.equals(request.getRecipientOrganizationId(), actor.organizationId()))
+                .map(TestRequest::getId).toList();
+        Set<Long> unreadIds = incomingIds.isEmpty() ? Set.of()
+                : new HashSet<>(requests.findUnreadIds(actor.organizationId(), actor.id(), incomingIds));
+        List<Map<String, Object>> content = result.getContent().stream().map(request -> {
+            Map<String, Object> item = mapView(request);
+            item.put("unread", unreadIds.contains(request.getId()));
+            return item;
+        }).toList();
+        return fields("content", content,
                 "page", page, "size", size, "totalElements", result.getTotalElements(), "totalPages", (long) result.getTotalPages());
     }
 

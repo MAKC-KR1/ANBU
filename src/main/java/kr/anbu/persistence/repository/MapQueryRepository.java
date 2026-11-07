@@ -61,7 +61,7 @@ public class MapQueryRepository {
         return dates;
     }
 
-    public Map<Long, RequestTotals> findRequestTotals() {
+    public Map<Long, RequestTotals> findRequestTotals(long organizationId) {
         Query query = entityManager.createNativeQuery("""
                 SELECT r.place_id,
                        SUM(CASE WHEN r.status = 'PENDING' THEN 1 ELSE 0 END) AS pending_requests,
@@ -72,8 +72,11 @@ public class MapQueryRepository {
                 FROM test_requests r
                 LEFT JOIN (SELECT request_id, SUM(completed_count) AS completed
                            FROM request_fulfillments GROUP BY request_id) f ON f.request_id = r.id
-                WHERE r.status IN ('PENDING', 'PLANNED') GROUP BY r.place_id
-                """);
+                WHERE r.status IN ('PENDING', 'PLANNED')
+                  AND (r.recipient_organization_id IS NULL OR r.recipient_organization_id = :organizationId
+                       OR r.requested_by_organization_id = :organizationId)
+                GROUP BY r.place_id
+                """).setParameter("organizationId", organizationId);
         Map<Long, RequestTotals> totals = new HashMap<>();
         for (Object[] row : rows(query)) {
             totals.put(longValue(row[0]), new RequestTotals(longValue(row[1]), longValue(row[2]),

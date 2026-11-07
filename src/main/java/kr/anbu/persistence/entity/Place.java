@@ -20,6 +20,9 @@ public class Place {
     @Column(name = "name", nullable = false, length = 200)
     private String name;
 
+    @Column(name = "place_type", length = 30)
+    private String placeType;
+
     @Column(name = "dong_id", nullable = false)
     private Long dongId;
 
@@ -67,6 +70,14 @@ public class Place {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPlaceType() {
+        return placeType;
+    }
+
+    public void setPlaceType(String placeType) {
+        this.placeType = placeType;
     }
 
     public Long getDongId() {

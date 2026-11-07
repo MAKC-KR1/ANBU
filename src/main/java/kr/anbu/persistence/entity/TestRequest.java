@@ -16,6 +16,9 @@ public class TestRequest {
     private Integer requestedCount;
     private LocalDate requestedDate;
     private Long requestedByOrganizationId;
+    private Long recipientOrganizationId;
+    @Column(length = 500)
+    private String note;
     private String status;
     private Long plannedOrganizationId;
     private LocalDate plannedDate;
@@ -77,6 +80,22 @@ public class TestRequest {
 
     public void setRequestedByOrganizationId(Long requestedByOrganizationId) {
         this.requestedByOrganizationId = requestedByOrganizationId;
+    }
+
+    public Long getRecipientOrganizationId() {
+        return recipientOrganizationId;
+    }
+
+    public void setRecipientOrganizationId(Long recipientOrganizationId) {
+        this.recipientOrganizationId = recipientOrganizationId;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getStatus() {

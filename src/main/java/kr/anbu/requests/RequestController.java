@@ -15,8 +15,17 @@ public class RequestController {
             @RequestParam(defaultValue = "PENDING,PLANNED") String status,
             @RequestParam(required = false) Long dongId, @RequestParam(required = false) Long placeId,
             @RequestParam(required = false) Long testTypeId, @RequestParam(defaultValue = "oldest") String sort,
+            @RequestParam(defaultValue = "all") String direction,
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        return ApiResponse.ok(service.list(assignable, status, dongId, placeId, testTypeId, sort, page, size));
+        return ApiResponse.ok(service.list(assignable, status, dongId, placeId, testTypeId, sort, page, size, direction));
+    }
+    @GetMapping("/unread-count")
+    public ApiResponse<?> unreadCount() {
+        return ApiResponse.ok(service.unreadCount());
+    }
+    @PatchMapping("/{requestId}/read")
+    public ApiResponse<?> markRead(@PathVariable long requestId) {
+        return ApiResponse.ok(service.markRead(requestId));
     }
     @PatchMapping("/{requestId}/plan")
     public ApiResponse<?> plan(@PathVariable long requestId, @Valid @RequestBody RequestInput.Plan input) {

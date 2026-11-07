@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public class ReferenceController {
     private final ReferenceService references;
+    private final InspectionPriorityService inspectionPriorities;
 
-    public ReferenceController(ReferenceService references) {
+    public ReferenceController(ReferenceService references, InspectionPriorityService inspectionPriorities) {
         this.references = references;
+        this.inspectionPriorities = inspectionPriorities;
     }
 
     @GetMapping("/organizations")
@@ -46,6 +48,16 @@ public class ReferenceController {
     @GetMapping("/dongs")
     public ApiResponse<?> dongs() {
         return ApiResponse.ok(references.dongs());
+    }
+
+    @GetMapping("/dongs/priorities")
+    public ApiResponse<InspectionPriorityService.DongPriorities> dongPriorities(@RequestParam(required = false) @Positive Long testTypeId) {
+        return ApiResponse.ok(inspectionPriorities.dongPriorities(testTypeId));
+    }
+
+    @GetMapping("/dongs/{dongId}/places/priorities")
+    public ApiResponse<InspectionPriorityService.PlacePriorities> placePriorities(@PathVariable long dongId, @RequestParam(required = false) @Positive Long testTypeId) {
+        return ApiResponse.ok(inspectionPriorities.placePriorities(dongId, testTypeId));
     }
 
     @GetMapping("/stats/organizations")

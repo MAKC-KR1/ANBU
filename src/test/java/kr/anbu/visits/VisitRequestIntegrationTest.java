@@ -56,8 +56,11 @@ class VisitRequestIntegrationTest {
     void clearActor() { SecurityContextHolder.clearContext(); }
 
     private static void actor(long org) {
+        actor(org, org);
+    }
+    private static void actor(long user, long org) {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
-                new Actor(org, "담당", "STAFF", org), null, List.of()));
+                new Actor(user, "담당", "STAFF", org), null, List.of()));
     }
     private VisitInput input(int performed, int requested) {
         return new VisitInput(requests.today(), 1L, List.of("A"),
@@ -70,6 +73,109 @@ class VisitRequestIntegrationTest {
         return ((List<Long>) created.get("createdRequestIds")).getFirst();
     }
     private long count(String table) { return jdbc.queryForObject("SELECT COUNT(*) FROM " + table, Long.class); }
+
+    private VisitInput directedRequest(long recipient, String note) {
+        return new VisitInput(requests.today(), 1L, List.of("A"), List.of(),
+                List.of(new VisitInput.TestCount(1L, 2, recipient, note)), List.of(), "");
+    }
+
+    private Map<String, Object> requestBox(String direction) {
+        return requests.list(false, "PENDING,PLANNED,DONE", null, null, null, "oldest", 0, 20, direction);
+    }
+
+    private void assertSingleUnread(String direction, boolean unread) {
+        assertThat((List<?>) requestBox(direction).get("content")).singleElement()
+                .satisfies(row -> assertThat(((Map<?, ?>) row).get("unread")).isEqualTo(unread));
+    }
+
+    @Test
+    void targetedAlertsRemainUnreadForEachRecipientAccountUntilAcknowledged() {
+        jdbc.update("INSERT INTO users(id,login_id,password_hash,name,role,organization_id) VALUES(4,'four','hash','담당4','STAFF',2)");
+        long requestId = ((List<Long>) visits.create(directedRequest(2L, null)).get("createdRequestIds")).getFirst();
+        long legacyRequest = request(1);
+        assertThat(requests.unreadCount()).containsEntry("count", 0L);
+        assertSingleUnread("outgoing", false);
+        assertThatThrownBy(() -> requests.markRead(requestId))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("NOT_FOUND"));
+
+        actor(3);
+        assertThat(requests.unreadCount()).containsEntry("count", 0L);
+        assertThatThrownBy(() -> requests.markRead(requestId))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("NOT_FOUND"));
+
+        actor(2);
+        assertThat(requests.unreadCount()).containsEntry("count", 1L);
+        assertSingleUnread("incoming", true);
+        assertThatThrownBy(() -> requests.markRead(legacyRequest))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("NOT_FOUND"));
+        assertThat(requests.markRead(requestId)).containsEntry("requestId", requestId)
+                .containsEntry("unread", false).containsEntry("count", 0L);
+        assertThat(requests.markRead(requestId)).containsEntry("count", 0L);
+        assertSingleUnread("incoming", false);
+        assertThat(count("test_request_reads")).isEqualTo(1);
+
+        actor(4, 2);
+        assertThat(requests.unreadCount()).containsEntry("count", 1L);
+        assertSingleUnread("incoming", true);
+    }
+
+    @Test
+    void directedRequestAppearsOnlyForItsParticipantsAndOnlyRecipientCanAct() {
+        jdbc.update("INSERT INTO test_type_organizations(test_type_id,organization_id) VALUES(1,3)");
+        var created = visits.create(directedRequest(2L, " 일정 협의 부탁드립니다. "));
+        long sourceVisitId = id(created);
+        long requestId = ((List<Long>) created.get("createdRequestIds")).getFirst();
+
+        assertThat(requestBox("incoming")).containsEntry("totalElements", 0L);
+        assertThat(requestBox("outgoing")).containsEntry("totalElements", 1L);
+        assertThat(requests.view(requestId)).containsEntry("sourceVisitId", sourceVisitId)
+                .containsEntry("recipientOrganization", Map.of("id", 2L, "name", "기관2"))
+                .containsEntry("note", "일정 협의 부탁드립니다.");
+        assertThatThrownBy(() -> requests.plan(requestId, requests.today()))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("FORBIDDEN"));
+
+        actor(3);
+        long unrelatedVisit = id(visits.create(input(2, 0)));
+        assertThat(requestBox("all")).containsEntry("totalElements", 0L);
+        assertThat(requests.placeRequests(1L)).isEmpty();
+        assertThat(visits.view(sourceVisitId)).containsEntry("createdRequestIds", List.of());
+        assertThatThrownBy(() -> requests.view(requestId))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("NOT_FOUND"));
+        assertThatThrownBy(() -> requests.plan(requestId, requests.today()))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("FORBIDDEN"));
+        assertThatThrownBy(() -> requests.complete(requestId, unrelatedVisit, 2))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("FORBIDDEN"));
+
+        actor(2);
+        assertThat(requestBox("incoming")).containsEntry("totalElements", 1L);
+        assertThat(requestBox("outgoing")).containsEntry("totalElements", 0L);
+        assertThat(requests.plan(requestId, requests.today())).containsEntry("status", "PLANNED");
+        assertThat(requests.unplan(requestId)).containsEntry("status", "PENDING");
+        assertThat(requests.plan(requestId, requests.today())).containsEntry("status", "PLANNED");
+        var outcome = visits.create(new VisitInput(requests.today(), 1L, List.of("A"),
+                List.of(new VisitInput.TestCount(1L, 2)), List.of(), List.of(new VisitInput.Fulfillment(requestId, 2)), ""));
+        assertThat(requests.view(requestId)).containsEntry("status", "DONE").containsEntry("remainingCount", 0L);
+
+        actor(1);
+        assertThat(requestBox("outgoing")).containsEntry("totalElements", 1L);
+        assertThat(visits.view(id(outcome))).containsEntry("fulfillments", List.of(Map.of("requestId", requestId, "completedCount", 2)));
+    }
+
+    @Test
+    void invalidRecipientsDoNotCreateVisitOrRequest() {
+        assertThatThrownBy(() -> visits.create(directedRequest(1L, null)))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("INVALID_INPUT"));
+        assertThatThrownBy(() -> visits.create(directedRequest(3L, null)))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("INVALID_INPUT"));
+        jdbc.update("INSERT INTO test_type_organizations(test_type_id,organization_id) VALUES(1,3)");
+        jdbc.update("DELETE FROM users WHERE organization_id=3");
+        assertThatThrownBy(() -> visits.create(directedRequest(3L, null)))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("INVALID_INPUT"));
+        assertThatThrownBy(() -> visits.create(directedRequest(2L, "a".repeat(501))))
+                .isInstanceOfSatisfying(ApiException.class, e -> assertThat(e.code()).isEqualTo("INVALID_INPUT"));
+        assertThat(count("visits")).isZero();
+        assertThat(count("test_requests")).isZero();
+    }
 
     @Test
     void partialCompletionPreservesPlanAndAggregatesUntilDone() {

@@ -48,10 +48,11 @@ public class MapService {
             throw invalid("지원하지 않는 gapLevel입니다.");
         }
         LocalDate today = LocalDate.now(clock);
-        Map<String, Integer> cycles = visitCycles.cycles(Actor.current().organizationId());
+        long organizationId = Actor.current().organizationId();
+        Map<String, Integer> cycles = visitCycles.cycles(organizationId);
         Map<Long, Map<String, LocalDate>> dates = mapQueries.findLatestServiceDates(today);
         Map<Long, LocalDate> latest = mapQueries.findLatestVisitDates(today);
-        Map<Long, RequestTotals> totals = mapQueries.findRequestTotals();
+        Map<Long, RequestTotals> totals = mapQueries.findRequestTotals(organizationId);
         return mapQueries.findRegisteredPlaces().stream()
                 .map(this::placeView)
                 .filter(place -> dongId == null || place.dongId() == dongId)
@@ -68,7 +69,8 @@ public class MapService {
         Place place = mapQueries.findPlace(placeId).map(this::placeView)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "NOT_FOUND", "장소를 찾을 수 없습니다."));
         LocalDate today = LocalDate.now(clock);
-        Map<String, Integer> cycles = visitCycles.cycles(Actor.current().organizationId());
+        long organizationId = Actor.current().organizationId();
+        Map<String, Integer> cycles = visitCycles.cycles(organizationId);
         Map<String, LocalDate> lastByService = mapQueries.findLatestServiceDates(today).getOrDefault(placeId, Map.of());
         LocalDate latest = mapQueries.findLatestVisitDates(today).get(placeId);
         Map<String, List<HistoryVisit>> histories = histories(placeId, historyLimit, today);
@@ -78,7 +80,7 @@ public class MapService {
             return new ServiceHistory(code, lastDate, gapLevel(lastDate, today), cycleDays,
                     isOverdue(lastDate, cycleDays, today), histories.get(code));
         }).toList();
-        RequestTotals totals = mapQueries.findRequestTotals().getOrDefault(placeId, RequestTotals.EMPTY);
+        RequestTotals totals = mapQueries.findRequestTotals(organizationId).getOrDefault(placeId, RequestTotals.EMPTY);
         return new Summary(place, latest, gapLevel(latest, today), historyByService,
                 requests.placeRequests(placeId), totals.outstandingRequestCount(), totals.outstandingRequestedCount());
     }
@@ -92,7 +94,7 @@ public class MapService {
                 .filter(code -> isOverdue(serviceDates.get(code), cycles.get(code), today)).toList();
         List<String> noRecord = SERVICES.stream().filter(code -> !serviceDates.containsKey(code)).toList();
         RequestTotals counts = totals.getOrDefault(place.id(), RequestTotals.EMPTY);
-        return new Marker(place.id(), place.name(), place.dongId(), place.dongName(), place.lat(), place.lng(),
+        return new Marker(place.id(), place.name(), place.dongId(), place.dongName(), place.lat(), place.lng(), place.address(),
                 lastDate, daysSince(lastDate, today), gapLevel(lastDate, today), overdue, noRecord,
                 counts.pendingRequestCount(), counts.pendingRequestedCount(),
                 counts.outstandingRequestCount(), counts.outstandingRequestedCount());
@@ -159,7 +161,7 @@ public class MapService {
     public record Place(long id, String name, long dongId, String dongName, String address,
             Double lat, Double lng, Double nearestClinicKm) {}
 
-    public record Marker(long placeId, String name, long dongId, String dongName, Double lat, Double lng,
+    public record Marker(long placeId, String name, long dongId, String dongName, Double lat, Double lng, String address,
             LocalDate lastVisitDate, Long daysSinceLastVisit, String gapLevel, List<String> overdueServiceCodes,
             List<String> noRecordServiceCodes, long pendingRequestCount, long pendingRequestedCount,
             long outstandingRequestCount, long outstandingRequestedCount) {}

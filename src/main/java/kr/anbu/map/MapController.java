@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class MapController {
     private final MapService maps;
+    private final FacilityCoverageService coverage;
 
-    public MapController(MapService maps) {
+    public MapController(MapService maps, FacilityCoverageService coverage) {
         this.maps = maps;
+        this.coverage = coverage;
     }
 
     @GetMapping("/map/places")
@@ -23,6 +25,11 @@ public class MapController {
             @RequestParam(required = false) String gapLevel,
             @RequestParam(required = false) Boolean hasPendingRequest) {
         return ApiResponse.ok(maps.places(dongId, serviceCode, gapLevel, hasPendingRequest));
+    }
+
+    @GetMapping("/map/dongs/{dongId}/coverage")
+    public ApiResponse<FacilityCoverageService.Coverage> coverage(@PathVariable long dongId) {
+        return ApiResponse.ok(coverage.forDong(dongId));
     }
 
     @GetMapping("/places/{placeId}/summary")

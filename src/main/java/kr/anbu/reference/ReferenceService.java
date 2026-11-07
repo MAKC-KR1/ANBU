@@ -38,12 +38,13 @@ public class ReferenceService {
     private final VisitCycleRepository visitCycles;
     private final VisitCycleService cycles;
     private final OrganizationStatisticsRepository statistics;
+    private final UserAccountRepository users;
 
     public ReferenceService(OrganizationRepository organizations, OrganizationDongRepository organizationDongs,
                             TestTypeRepository testTypes, TestTypeOrganizationRepository assignments,
                             DongRepository dongs, DongIndicatorMetadataRepository metadata,
                             VisitCycleRepository visitCycles, VisitCycleService cycles,
-                            OrganizationStatisticsRepository statistics) {
+                            OrganizationStatisticsRepository statistics, UserAccountRepository users) {
         this.organizations = organizations;
         this.organizationDongs = organizationDongs;
         this.testTypes = testTypes;
@@ -53,6 +54,7 @@ public class ReferenceService {
         this.visitCycles = visitCycles;
         this.cycles = cycles;
         this.statistics = statistics;
+        this.users = users;
     }
 
     public List<Map<String, Object>> organizations(String type) {
@@ -91,12 +93,17 @@ public class ReferenceService {
     }
 
     public List<Map<String, Object>> testTypes() {
-        return testTypes.findAllByOrderByIdAsc().stream().map(testType -> Map.<String, Object>of(
-                "id", testType.getId(), "name", testType.getName(), "serviceCode", testType.getServiceCode(),
-                "responsibleOrganizations", assignments.findByTestTypeIdOrderByOrganizationIdAsc(testType.getId())
-                        .stream().map(assignment -> organizations.findById(assignment.getOrganizationId()).orElseThrow())
-                        .map(organization -> Map.of("id", organization.getId(), "name", organization.getName()))
-                        .toList())).toList();
+        var registeredOrganizationIds = new HashSet<>(users.findRegisteredOrganizationIds());
+        return testTypes.findAllByOrderByIdAsc().stream().map(testType -> {
+            var responsible = assignments.findByTestTypeIdOrderByOrganizationIdAsc(testType.getId()).stream()
+                    .map(assignment -> organizations.findById(assignment.getOrganizationId()).orElseThrow())
+                    .map(organization -> Map.of("id", organization.getId(), "name", organization.getName()))
+                    .toList();
+            return Map.<String, Object>of("id", testType.getId(), "name", testType.getName(),
+                    "serviceCode", testType.getServiceCode(), "responsibleOrganizations", responsible,
+                    "referralOrganizations", responsible.stream()
+                            .filter(organization -> registeredOrganizationIds.contains(organization.get("id"))).toList());
+        }).toList();
     }
 
     @Transactional

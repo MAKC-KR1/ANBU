@@ -1,0 +1,480 @@
+{
+  "boundaryDate": "2026-10-01",
+  "seniorCenterDate": "2026-08-18",
+  "dongs": [
+    {
+      "code": "4127151000",
+      "name": "일동",
+      "gu": "상록구",
+      "bounds": [126.855782, 37.302383, 126.881808, 37.320862],
+      "places": [
+        {"name": "구룡경로당", "address": "경기도 안산시 상록구 구룡동길 4-4, B102호(일동)", "latitude": 37.3117193, "longitude": 126.8686408, "type": "SENIOR_CENTER"},
+        {"name": "성호경로당", "address": "경기도 안산시 상록구 성호로6길 14(일동)", "latitude": 37.314792, "longitude": 126.8629991, "type": "SENIOR_CENTER"},
+        {"name": "안골경로당", "address": "경기도 안산시 상록구 웃말3길 12(일동)", "latitude": 37.3096859, "longitude": 126.8717848, "type": "SENIOR_CENTER"},
+        {"name": "일동경로당", "address": "경기도 안산시 상록구 구룡서길 41-3(일동)", "latitude": 37.3147044, "longitude": 126.8698484, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127151500",
+      "name": "이동",
+      "gu": "상록구",
+      "bounds": [126.84211, 37.302248, 126.874489, 37.31629],
+      "places": [
+        {"name": "그린빌10단지경로당", "address": "경기도 안산시 상록구 안산천남1로 100(이동) 105동", "latitude": 37.310948, "longitude": 126.8438115, "type": "SENIOR_CENTER"},
+        {"name": "매화경로당", "address": "경기도 안산시 상록구 매화로1길 12-3(이동)", "latitude": 37.3058257, "longitude": 126.8591746, "type": "SENIOR_CENTER"},
+        {"name": "무지개경로당", "address": "경기도 안산시 상록구 양지편2길 20(이동)", "latitude": 37.3105737, "longitude": 126.8488598, "type": "SENIOR_CENTER"},
+        {"name": "상록수경로당", "address": "경기도 안산시 상록구 실록1길 5(일동)", "latitude": 37.3058021, "longitude": 126.8642285, "type": "SENIOR_CENTER"},
+        {"name": "이동경로당", "address": "경기도 안산시 상록구 도매시장로1길 31(이동)", "latitude": 37.3117792, "longitude": 126.8589156, "type": "SENIOR_CENTER"},
+        {"name": "푸르지오2차경로당", "address": "경기도 안산시 상록구 안산천남1로 70(이동)", "latitude": 37.3081217, "longitude": 126.8432005, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127152500",
+      "name": "사동",
+      "gu": "상록구",
+      "bounds": [126.842033, 37.290362, 126.859142, 37.308359],
+      "places": [
+        {"name": "고향마을아파트경로당", "address": "경기도 안산시 상록구 용하공원로 39(사동)", "latitude": 37.3063073, "longitude": 126.8530647, "type": "SENIOR_CENTER"},
+        {"name": "늘푸른아파트경로당", "address": "경기도 안산시 상록구 중보로 22(사동)", "latitude": 37.3059314, "longitude": 126.8505323, "type": "SENIOR_CENTER"},
+        {"name": "덕망경로당", "address": "경기도 안산시 상록구 후곡1길 26-9(사동)", "latitude": 37.2976773, "longitude": 126.8449506, "type": "SENIOR_CENTER"},
+        {"name": "석호경로당", "address": "경기도 안산시 상록구 서암로1길 10-3(사동)", "latitude": 37.3020829, "longitude": 126.8485831, "type": "SENIOR_CENTER"},
+        {"name": "시곡경로당", "address": "경기도 안산시 상록구 시곡2길 2(사동)", "latitude": 37.2945037, "longitude": 126.8559055, "type": "SENIOR_CENTER"},
+        {"name": "용신경로당", "address": "경기도 안산시 상록구 이화3길 26(사동)", "latitude": 37.3003157, "longitude": 126.856844, "type": "SENIOR_CENTER"},
+        {"name": "천문경로당", "address": "경기도 안산시 상록구 천문2길 76(사동)", "latitude": 37.3055514, "longitude": 126.845744, "type": "SENIOR_CENTER"},
+        {"name": "푸른마을 주공2단지경로당", "address": "경기도 안산시 상록구 중보로 16(사동)", "latitude": 37.3053905, "longitude": 126.8486568, "type": "SENIOR_CENTER"},
+        {"name": "푸른마을 주공4단지경로당", "address": "경기도 안산시 상록구 용하공원로 7(사동)", "latitude": 37.3039266, "longitude": 126.8500778, "type": "SENIOR_CENTER"},
+        {"name": "푸른마을 주공5단지경로당", "address": "경기도 안산시 상록구 광덕4로 460(사동)", "latitude": 37.3030081, "longitude": 126.8557317, "type": "SENIOR_CENTER"},
+        {"name": "후곡경로당", "address": "경기도 안산시 상록구 네고지2길 14(사동)", "latitude": 37.29649, "longitude": 126.8497961, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127153200",
+      "name": "사이동",
+      "gu": "상록구",
+      "bounds": [126.825735, 37.275125, 126.857751, 37.293155],
+      "places": [
+        {"name": "경우경로당", "address": "경기도 안산시 상록구 영화5길 15(사이동)", "latitude": 37.2797608, "longitude": 126.8511104, "type": "SENIOR_CENTER"},
+        {"name": "그랑시티자이2차아파트경로당", "address": "경기도 안산시 상록구 해양5로17(사동,그랑시티자이2차커뮤니티센터1층)", "latitude": 37.2804936, "longitude": 126.8302266, "type": "SENIOR_CENTER"},
+        {"name": "그랑시티자이아파트 경로당", "address": "경기도 안산시 상록구 해양4로 31,110동 자이안센터 1층(해양동, 그랑시티자이)", "latitude": 37.2822867, "longitude": 126.8311348, "type": "SENIOR_CENTER"},
+        {"name": "본오2차경로당", "address": "경기도 안산시 상록구 선진로 114(사이동)", "latitude": 37.2807967, "longitude": 126.8538687, "type": "SENIOR_CENTER"},
+        {"name": "사이동 본오1차아파트경로당", "address": "경기도 안산시 상록구 선진로 108(사이동)", "latitude": 37.2802648, "longitude": 126.8538429, "type": "SENIOR_CENTER"},
+        {"name": "사이동 선경아파트경로당", "address": "경기도 안산시 상록구 감골2로 58(사이동)", "latitude": 37.2913657, "longitude": 126.8491522, "type": "SENIOR_CENTER"},
+        {"name": "사이동 신우아파트경로당", "address": "경기도 안산시 상록구 감골로 83(사이동)", "latitude": 37.2883051, "longitude": 126.8550519, "type": "SENIOR_CENTER"},
+        {"name": "사이동 요진아파트경로당", "address": "경기도 안산시 상록구 감골2로 47 (사이동)", "latitude": 37.2903687, "longitude": 126.8504193, "type": "SENIOR_CENTER"},
+        {"name": "사이동 월드아파트경로당", "address": "경기도 안산시 상록구 감골로 59(사이동)", "latitude": 37.2878201, "longitude": 126.8552171, "type": "SENIOR_CENTER"},
+        {"name": "사이동 현대1차아파트경로당", "address": "경기도 안산시 상록구 감골1로 43(사이동)", "latitude": 37.2894488, "longitude": 126.8503317, "type": "SENIOR_CENTER"},
+        {"name": "사이동 현대2차아파트경로당", "address": "경기도 안산시 상록구 감골2로12(사이동)", "latitude": 37.2915407, "longitude": 126.8560631, "type": "SENIOR_CENTER"},
+        {"name": "예누림경로당", "address": "경기도 안산시 상록구 감골2로 11(사이동)", "latitude": 37.2903489, "longitude": 126.8539495, "type": "SENIOR_CENTER"},
+        {"name": "장화경로당", "address": "경기도 안산시 상록구 장화2길 20(사이동)", "latitude": 37.2834769, "longitude": 126.8496331, "type": "SENIOR_CENTER"},
+        {"name": "항가울경로당", "address": "경기도 안산시 상록구 항호2길 44, 102호(사이동)", "latitude": 37.2872361, "longitude": 126.844253, "type": "SENIOR_CENTER"},
+        {"name": "항호경로당", "address": "경기도 안산시 상록구 항호1길 30-21(사이동)", "latitude": 37.283783, "longitude": 126.8468205, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127153700",
+      "name": "해양동",
+      "gu": "상록구",
+      "bounds": [126.813919, 37.288106, 126.844397, 37.307157],
+      "places": [
+        {"name": "고잔6차푸르지오아파트경로당", "address": "경기도 안산시 상록구 해양1로 11(해양동)", "latitude": 37.294921, "longitude": 126.8257965, "type": "SENIOR_CENTER"},
+        {"name": "고잔7차푸르지오아파트경로당", "address": "경기도 안산시 상록구 해양1로 30(해양동)", "latitude": 37.2948303, "longitude": 126.8166736, "type": "SENIOR_CENTER"},
+        {"name": "대학동경로당", "address": "경기도 안산시 상록구 한양대학로 31(해양동)", "latitude": 37.3009034, "longitude": 126.840367, "type": "SENIOR_CENTER"},
+        {"name": "상록마을 삼보아파트경로당", "address": "경기도 안산시 상록구 삼리로 23(해양동)", "latitude": 37.3066387, "longitude": 126.8426704, "type": "SENIOR_CENTER"},
+        {"name": "숲속마을 요진아파트경로당", "address": "경기도 안산시 상록구 삼리로 24(해양동)", "latitude": 37.3035625, "longitude": 126.8395366, "type": "SENIOR_CENTER"},
+        {"name": "푸르지오9차아파트경로당", "address": "경기도 안산시 상록구 해양로 16(사동, 안산고잔9차푸르지오)", "latitude": 37.294284, "longitude": 126.8197273, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127154000",
+      "name": "본오1동",
+      "gu": "상록구",
+      "bounds": [126.837805, 37.265748, 126.899549, 37.299298],
+      "places": [
+        {"name": "담원경로당", "address": "경기도 안산시 상록구 팔곡두레길 27(팔곡이동)", "latitude": 37.2943804, "longitude": 126.8816901, "type": "SENIOR_CENTER"},
+        {"name": "본오경로당", "address": "경기도 안산시 상록구 본오로2길 20(본오1동)", "latitude": 37.2863599, "longitude": 126.8682984, "type": "SENIOR_CENTER"},
+        {"name": "본원경로당", "address": "경기도 안산시 상록구 본원로 45-1, 203호(본오1동)", "latitude": 37.2920723, "longitude": 126.863555, "type": "SENIOR_CENTER"},
+        {"name": "본일경로당", "address": "경기도 안산시 상록구 샘골로 7-1(본오1동)", "latitude": 37.284647, "longitude": 126.8635087, "type": "SENIOR_CENTER"},
+        {"name": "산정경로당", "address": "경기도 안산시 상록구 충장로3길 22(본오1동)", "latitude": 37.2927952, "longitude": 126.8609501, "type": "SENIOR_CENTER"},
+        {"name": "선암로경로당", "address": "경기도 안산시 상록구 선암로1길 31, 101호(본오1동)", "latitude": 37.2891442, "longitude": 126.8579714, "type": "SENIOR_CENTER"},
+        {"name": "소학경로당", "address": "경기도 안산시 상록구 팔곡길 53(팔곡이동)", "latitude": 37.2980525, "longitude": 126.8850534, "type": "SENIOR_CENTER"},
+        {"name": "오목골경로당", "address": "경기도 안산시 상록구 선암로 5-1, 102호(본오1동)", "latitude": 37.2897759, "longitude": 126.8608716, "type": "SENIOR_CENTER"},
+        {"name": "이호경로당", "address": "경기도 안산시 상록구 막고지1길 19-5(본오1동)", "latitude": 37.2833603, "longitude": 126.85807, "type": "SENIOR_CENTER"},
+        {"name": "정곡경로당", "address": "경기도 안산시 상록구 본오로7길 38-15(본오1동)", "latitude": 37.2908616, "longitude": 126.8679153, "type": "SENIOR_CENTER"},
+        {"name": "팔곡마을주공아파트경로당", "address": "경기도 안산시 상록구 정동1길 7(팔곡일동)", "latitude": 37.2978523, "longitude": 126.8867708, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127155000",
+      "name": "본오2동",
+      "gu": "상록구",
+      "bounds": [126.857936, 37.289992, 126.878428, 37.299485],
+      "places": [
+        {"name": "각골경로당", "address": "경기도 안산시 상록구 각골서로3길 12(본오2동)", "latitude": 37.2956379, "longitude": 126.8708101, "type": "SENIOR_CENTER"},
+        {"name": "보니경로당", "address": "경기도 안산시 상록구 오목로 192-16(본오2동)", "latitude": 37.2940185, "longitude": 126.8777254, "type": "SENIOR_CENTER"},
+        {"name": "본오2동 한양아파트경로당", "address": "경기도 안산시 상록구 반석로8(본오2동)", "latitude": 37.2964463, "longitude": 126.8601959, "type": "SENIOR_CENTER"},
+        {"name": "신안1단지아파트경로당", "address": "경기도 안산시 상록구 반석로 44(본오2동)", "latitude": 37.2959356, "longitude": 126.8642527, "type": "SENIOR_CENTER"},
+        {"name": "약수경로당", "address": "경기도 안산시 상록구 각골로2안길 18(본오2동)", "latitude": 37.2958735, "longitude": 126.8747429, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127156000",
+      "name": "본오3동",
+      "gu": "상록구",
+      "bounds": [126.858571, 37.296504, 126.87851, 37.304404],
+      "places": [
+        {"name": "만남경로당", "address": "경기도 안산시 상록구 상록수로 28,404호(본오3동,올림포스보노피아)", "latitude": 37.3021139, "longitude": 126.8629981, "type": "SENIOR_CENTER"},
+        {"name": "본오3동 월드아파트경로당", "address": "경기도 안산시 상록구 본삼로 48(본오3동)", "latitude": 37.2998115, "longitude": 126.8662698, "type": "SENIOR_CENTER"},
+        {"name": "본오3동 주공아파트경로당", "address": "경기도 안산시 상록구 본삼로 8(본오3동)", "latitude": 37.3002329, "longitude": 126.8604095, "type": "SENIOR_CENTER"},
+        {"name": "신안2단지아파트경로당", "address": "경기도 안산시 상록구 반석로 9(본오3동)", "latitude": 37.2981444, "longitude": 126.8615576, "type": "SENIOR_CENTER"},
+        {"name": "양지경로당", "address": "경기도 안산시 상록구 반석로2길 12(본오3동)", "latitude": 37.2977705, "longitude": 126.8695601, "type": "SENIOR_CENTER"},
+        {"name": "우성아파트경로당", "address": "경기도 안산시 상록구 본오로 145(본오3동)", "latitude": 37.2974304, "longitude": 126.8641513, "type": "SENIOR_CENTER"},
+        {"name": "장수경로당", "address": "경기도 안산시 상록구 각골로7길 9(본오3동)", "latitude": 37.3007338, "longitude": 126.874163, "type": "SENIOR_CENTER"},
+        {"name": "태영아파트경로당", "address": "경기도 안산시 상록구 충장로 198(본오3동)", "latitude": 37.2991978, "longitude": 126.8605266, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127157000",
+      "name": "부곡동",
+      "gu": "상록구",
+      "bounds": [126.854291, 37.317957, 126.887698, 37.347726],
+      "places": [
+        {"name": "부곡경로당", "address": "경기도 안산시 상록구 부곡로1안길 30(부곡동)", "latitude": 37.3230213, "longitude": 126.8604495, "type": "SENIOR_CENTER"},
+        {"name": "부남경로당", "address": "경기도 안산시 상록구 부곡로3길 6(부곡동)", "latitude": 37.326807, "longitude": 126.8605729, "type": "SENIOR_CENTER"},
+        {"name": "시랑경로당", "address": "경기도 안산시 상록구 정재로 28(부곡동)", "latitude": 37.3324339, "longitude": 126.8647648, "type": "SENIOR_CENTER"},
+        {"name": "아람경로당", "address": "경기도 안산시 상록구 성호로 11길 11, 102호(부곡동)", "latitude": 37.3243953, "longitude": 126.8590297, "type": "SENIOR_CENTER"},
+        {"name": "정재경로당", "address": "경기도 안산시 상록구 성호로22길 44 (부곡동)", "latitude": 37.3346265, "longitude": 126.8631971, "type": "SENIOR_CENTER"},
+        {"name": "제일경로당", "address": "경기도 안산시 상록구 성호로23길 13(부곡동)", "latitude": 37.3356054, "longitude": 126.8647397, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127158000",
+      "name": "월피동",
+      "gu": "상록구",
+      "bounds": [126.834543, 37.326035, 126.862779, 37.365054],
+      "places": [
+        {"name": "광덕경로당", "address": "경기도 안산시 상록구 광덕산안길 35,1층(월피동)", "latitude": 37.3366703, "longitude": 126.8453363, "type": "SENIOR_CENTER"},
+        {"name": "부루지경로당", "address": "경기도 안산시 상록구 부루지2길 21(월피동)", "latitude": 37.3303447, "longitude": 126.8518084, "type": "SENIOR_CENTER"},
+        {"name": "부원연립경로당", "address": "경기도 안산시 상록구 부루지길 16(월피동)", "latitude": 37.327671, "longitude": 126.8520634, "type": "SENIOR_CENTER"},
+        {"name": "상양대경로당", "address": "경기도 안산시 상록구 서당길 1(양상동)", "latitude": 37.3548313, "longitude": 126.8458034, "type": "SENIOR_CENTER"},
+        {"name": "성모경로당", "address": "경기도 안산시 상록구 부루지성모길 1- 102호(월피동)", "latitude": 37.3336035, "longitude": 126.8532061, "type": "SENIOR_CENTER"},
+        {"name": "월광경로당", "address": "경기도 안산시 상록구 광덕산1로 9-13(월피동)", "latitude": 37.3356188, "longitude": 126.8437725, "type": "SENIOR_CENTER"},
+        {"name": "월성경로당", "address": "경기도 안산시 상록구 안산천동로9길 11-1(월피동)", "latitude": 37.3370295, "longitude": 126.8526321, "type": "SENIOR_CENTER"},
+        {"name": "월피경로당", "address": "경기도 안산시 상록구 시낭북로3길 12(부곡동)", "latitude": 37.3343573, "longitude": 126.8586309, "type": "SENIOR_CENTER"},
+        {"name": "월피동 주공1차아파트경로당", "address": "경기도 안산시 상록구 충장로 565(월피동)", "latitude": 37.3280472, "longitude": 126.849045, "type": "SENIOR_CENTER"},
+        {"name": "월피동 주공2차아파트경로당", "address": "경기도 안산시 상록구 안산천동로 146(월피동)", "latitude": 37.3301258, "longitude": 126.8432021, "type": "SENIOR_CENTER"},
+        {"name": "월피동 주공3차아파트경로당", "address": "경기도 안산시 상록구 안산천동로1길 10(월피동)", "latitude": 37.3305403, "longitude": 126.8441323, "type": "SENIOR_CENTER"},
+        {"name": "월피동 한양아파트경로당", "address": "경기도 안산시 상록구 안산천동로1길 9(월피동)", "latitude": 37.3323568, "longitude": 126.8493065, "type": "SENIOR_CENTER"},
+        {"name": "월피동 현대2차아파트경로당", "address": "경기도 안산시 상록구 안산천동로1길 29(월피동)", "latitude": 37.3300896, "longitude": 126.8496683, "type": "SENIOR_CENTER"},
+        {"name": "조은경로당", "address": "경기도 안산시 상록구 시낭북로 46, 101호 (부곡동)", "latitude": 37.3367761, "longitude": 126.8590458, "type": "SENIOR_CENTER"},
+        {"name": "하양대경로당", "address": "경기도 안산시 상록구 버대길 11(양상동)", "latitude": 37.3530361, "longitude": 126.8465081, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127159000",
+      "name": "성포동",
+      "gu": "상록구",
+      "bounds": [126.841022, 37.314546, 126.857029, 37.328096],
+      "places": [
+        {"name": "삼환연립경로당", "address": "경기도 안산시 상록구 충장로 452(성포동)", "latitude": 37.3190223, "longitude": 126.8512922, "type": "SENIOR_CENTER"},
+        {"name": "성포동 선경아파트경로당", "address": "경기도 안산시 상록구 예술광장1로 131(성포동)", "latitude": 37.3247825, "longitude": 126.8422797, "type": "SENIOR_CENTER"},
+        {"name": "성포동 신우연립경로당", "address": "경기도 안산시 상록구 충장로 444(성포동)", "latitude": 37.3184646, "longitude": 126.8495407, "type": "SENIOR_CENTER"},
+        {"name": "성포동 주공10단지경로당", "address": "경기도 안산시 상록구 화랑로 527(성포동)", "latitude": 37.3219341, "longitude": 126.8477278, "type": "SENIOR_CENTER"},
+        {"name": "성포동 주공11단지경로당", "address": "경기도 안산시 상록구 충장로 533(성포동)", "latitude": 37.3248871, "longitude": 126.8483936, "type": "SENIOR_CENTER"},
+        {"name": "성포동 주공4단지경로당", "address": "경기도 안산시 상록구 화랑로 510(성포동)", "latitude": 37.3201563, "longitude": 126.8437496, "type": "SENIOR_CENTER"},
+        {"name": "성포동 현대아파트경로당", "address": "경기도 안산시 상록구 성포로 31(성포동)", "latitude": 37.3242811, "longitude": 126.845379, "type": "SENIOR_CENTER"},
+        {"name": "안산파크푸르지오아파트경로당", "address": "경기도 안산시 상록구 화랑로 534(성포동)", "latitude": 37.319723, "longitude": 126.8473666, "type": "SENIOR_CENTER"},
+        {"name": "예술인아파트경로당", "address": "경기도 안산시 상록구 화랑로 495(성포동)", "latitude": 37.3226953, "longitude": 126.8435415, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127160000",
+      "name": "반월동",
+      "gu": "상록구",
+      "bounds": [126.876943, 37.278797, 126.939546, 37.321884],
+      "places": [
+        {"name": "e-편한세상아파트경로당", "address": "경기도 안산시 상록구 건건7길 3(건건동)", "latitude": 37.3095491, "longitude": 126.9042531, "type": "SENIOR_CENTER"},
+        {"name": "건지미경로당", "address": "경기도 안산시 상록구 건지미길 21(건건동)", "latitude": 37.3008134, "longitude": 126.9067258, "type": "SENIOR_CENTER"},
+        {"name": "능전경로당", "address": "경기도 안산시 상록구 남산평길 41-36(팔곡일동)", "latitude": 37.3068201, "longitude": 126.894693, "type": "SENIOR_CENTER"},
+        {"name": "반월경로당", "address": "경기도 안산시 상록구 남산평1길 10(팔곡일동)", "latitude": 37.3041575, "longitude": 126.9000222, "type": "SENIOR_CENTER"},
+        {"name": "반월동 현대아파트경로당", "address": "경기도 안산시 상록구 양지마을1길 81(사사동)", "latitude": 37.2949707, "longitude": 126.9161265, "type": "SENIOR_CENTER"},
+        {"name": "반월역동문디이스트아파트경로당", "address": "경기도 안산시 상록구 건건1길 16(건건동)", "latitude": 37.3020655, "longitude": 126.9027824, "type": "SENIOR_CENTER"},
+        {"name": "반월역두산위브아파트경로당", "address": "경기도 안산시 상록구 건지미길 49, 106동 2602호 (건건동)", "latitude": 37.3016293, "longitude": 126.904334, "type": "SENIOR_CENTER"},
+        {"name": "사사2경로당", "address": "경기도 안산시 상록구 사사안골길 7(사사동)", "latitude": 37.2987702, "longitude": 126.9236968, "type": "SENIOR_CENTER"},
+        {"name": "사사3경로당", "address": "경기도 안산시 상록구 사사안골길 102(사사동)", "latitude": 37.3064317, "longitude": 126.9259454, "type": "SENIOR_CENTER"},
+        {"name": "서해아파트경로당", "address": "경기도 안산시 상록구 건건5길 6(건건동)", "latitude": 37.3067281, "longitude": 126.9041924, "type": "SENIOR_CENTER"},
+        {"name": "양촌경로당", "address": "경기도 안산시 상록구 양지마을1길 14(사사동)양지마을3길 20", "latitude": 37.2966674, "longitude": 126.9173992, "type": "SENIOR_CENTER"},
+        {"name": "영무예다음아파트경로당", "address": "경기도 안산시 상록구 건건로 82", "latitude": 37.3087464, "longitude": 126.9041745, "type": "SENIOR_CENTER"},
+        {"name": "창말경로당", "address": "경기도 안산시 상록구 건건5길 9-10(건건동)", "latitude": 37.3071881, "longitude": 126.9052123, "type": "SENIOR_CENTER"},
+        {"name": "충정경로당", "address": "경기도 안산시 상록구 충정공길 30, 1동 101호(사사동,대신타운)", "latitude": 37.299411, "longitude": 126.9248044, "type": "SENIOR_CENTER"},
+        {"name": "황제아파트경로당", "address": "경기도 안산시 상록구 사사안골길 6(사사동) 나-201", "latitude": 37.2985586, "longitude": 126.9242074, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127161000",
+      "name": "안산동",
+      "gu": "상록구",
+      "bounds": [126.853352, 37.342515, 126.897238, 37.376577],
+      "places": [
+        {"name": "건양아파트경로당", "address": "경기도 안산시 상록구 청룡길 25(장상동)", "latitude": 37.3593361, "longitude": 126.8728828, "type": "SENIOR_CENTER"},
+        {"name": "남사박경로당", "address": "경기도 안산시 상록구 남사박길 24(수암동)", "latitude": 37.3703265, "longitude": 126.8763991, "type": "SENIOR_CENTER"},
+        {"name": "노리울경로당", "address": "경기도 안산시 상록구 밤속골길 13 (장상동)", "latitude": 37.355207, "longitude": 126.8754842, "type": "SENIOR_CENTER"},
+        {"name": "동막골경로당", "address": "경기도 안산시 상록구 양달말길 37", "latitude": 37.350644, "longitude": 126.875112, "type": "SENIOR_CENTER"},
+        {"name": "벌말경로당", "address": "경기도 안산시 상록구 안산벌말길 38-3(장하동)", "latitude": 37.3611759, "longitude": 126.8673804, "type": "SENIOR_CENTER"},
+        {"name": "수암경로당", "address": "경기도 안산시 상록구 수암1길 15(수암동)", "latitude": 37.3631398, "longitude": 126.8777479, "type": "SENIOR_CENTER"},
+        {"name": "안산경로당", "address": "경기도 안산시 상록구 원당골3길 35(수암동)", "latitude": 37.3648045, "longitude": 126.8803648, "type": "SENIOR_CENTER"},
+        {"name": "원후경로당", "address": "경기도 안산시 상록구 원후길 6-15(장하동)", "latitude": 37.3513252, "longitude": 126.8587243, "type": "SENIOR_CENTER"},
+        {"name": "장상경로당", "address": "경기도 안산시 상록구 장상길 15(장상동)", "latitude": 37.3614865, "longitude": 126.8772871, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127351000",
+      "name": "와동",
+      "gu": "단원구",
+      "bounds": [126.816604, 37.329446, 126.841829, 37.348902],
+      "places": [
+        {"name": "강서경로당", "address": "경기도 안산시 단원구 화정로안길 6 (와동)", "latitude": 37.3329351, "longitude": 126.8174535, "type": "SENIOR_CENTER"},
+        {"name": "기와골경로당", "address": "경기도 안산시 단원구 와동공원로 109 (와동)", "latitude": 37.3412419, "longitude": 126.8209686, "type": "SENIOR_CENTER"},
+        {"name": "등대경로당", "address": "경기도 안산시 단원구 화정천동로2안길 25 (와동)", "latitude": 37.3453633, "longitude": 126.8222247, "type": "SENIOR_CENTER"},
+        {"name": "바라지경로당", "address": "경기도 안산시 단원구 화정로 2길 7 (와동)", "latitude": 37.3311095, "longitude": 126.8205175, "type": "SENIOR_CENTER"},
+        {"name": "방죽말경로당", "address": "경기도 안산시 단원구 와개1길 5 (와동, 효자빌라 2차)", "latitude": 37.3338698, "longitude": 126.8217269, "type": "SENIOR_CENTER"},
+        {"name": "보륭3차경로당", "address": "경기도 안산시 단원구 화정로3길 18 (와동, 보륭하이츠빌라3차)", "latitude": 37.3318158, "longitude": 126.8244897, "type": "SENIOR_CENTER"},
+        {"name": "사랑방경로당", "address": "경기도 안산시 단원구 와동로7길 3 (와동)", "latitude": 37.3405704, "longitude": 126.8277504, "type": "SENIOR_CENTER"},
+        {"name": "왜둘기경로당", "address": "경기도 안산시 단원구 화정천동로3길 17 (와동)", "latitude": 37.3442291, "longitude": 126.820527, "type": "SENIOR_CENTER"},
+        {"name": "정원경로당", "address": "경기도 안산시 단원구 단원안길 61 (고잔동)", "latitude": 37.3310109, "longitude": 126.8260143, "type": "SENIOR_CENTER"},
+        {"name": "천년가리더스카이아파트경로당", "address": "경기도 안산시 단원구 와동로 125, 104동 2층 (와동, 천년가리더스카이)", "latitude": 37.3408437, "longitude": 126.8262338, "type": "SENIOR_CENTER"},
+        {"name": "큰고개경로당", "address": "경기도 안산시 단원구 와동로1길 20 (와동)", "latitude": 37.3330753, "longitude": 126.8252036, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127352500",
+      "name": "고잔동",
+      "gu": "단원구",
+      "bounds": [126.817562, 37.316833, 126.83278, 37.333785],
+      "places": [
+        {"name": "고잔롯데캐슬경로당", "address": "경기도 안산시 단원구 적금로164 (고잔동)", "latitude": 37.3224592, "longitude": 126.826858, "type": "SENIOR_CENTER"},
+        {"name": "광신6차경로당", "address": "경기도 안산시 단원구 적금로5길 10 (고잔동)", "latitude": 37.3295828, "longitude": 126.8282933, "type": "SENIOR_CENTER"},
+        {"name": "대동12차경로당", "address": "경기도 안산시 단원구 인현중앙길 16 (고잔동)", "latitude": 37.3229247, "longitude": 126.8211078, "type": "SENIOR_CENTER"},
+        {"name": "대동15차경로당", "address": "경기도 안산시 단원구 적금로5길 17, 8동 106호 (고잔동)", "latitude": 37.3294907, "longitude": 126.8262749, "type": "SENIOR_CENTER"},
+        {"name": "무진3차경로당", "address": "경기도 안산시 단원구 인현로 39 (고잔동)", "latitude": 37.3256499, "longitude": 126.8224193, "type": "SENIOR_CENTER"},
+        {"name": "삼성경로당", "address": "경기도 안산시 단원구 적금로5길 16 (고잔동)", "latitude": 37.3306977, "longitude": 126.8262336, "type": "SENIOR_CENTER"},
+        {"name": "상우경로당", "address": "경기도 안산시 단원구 삼일로 467, 101동 101호 (고잔동)", "latitude": 37.3304122, "longitude": 126.8292508, "type": "SENIOR_CENTER"},
+        {"name": "세승경로당", "address": "경기도 안산시 단원구 인현3길 13 (고잔동)", "latitude": 37.3266017, "longitude": 126.8202719, "type": "SENIOR_CENTER"},
+        {"name": "신원7차경로당", "address": "경기도 안산시 단원구 인현중앙길 22 (고잔동)", "latitude": 37.3236331, "longitude": 126.8216722, "type": "SENIOR_CENTER"},
+        {"name": "신유5차경로당", "address": "경기도 안산시 단원구 단원로 65 (고잔동)", "latitude": 37.3265671, "longitude": 126.8258577, "type": "SENIOR_CENTER"},
+        {"name": "안식경로당", "address": "경기도 안산시 단원구 평화길 18 (고잔동)", "latitude": 37.3282932, "longitude": 126.8191171, "type": "SENIOR_CENTER"},
+        {"name": "적금경로당", "address": "경기도 안산시 단원구 큰우물길 22 (고잔동)", "latitude": 37.323028, "longitude": 126.8260707, "type": "SENIOR_CENTER"},
+        {"name": "진우2차경로당", "address": "경기도 안산시 단원구 인현중앙길 28 (고잔동)", "latitude": 37.3238464, "longitude": 126.8213755, "type": "SENIOR_CENTER"},
+        {"name": "창동연립경로당", "address": "경기도 안산시 단원구 화정천동로 224 (고잔동)", "latitude": 37.3247046, "longitude": 126.8197825, "type": "SENIOR_CENTER"},
+        {"name": "태양경로당", "address": "경기도 안산시 단원구 삼일로 497 (고잔동)", "latitude": 37.3301501, "longitude": 126.8300786, "type": "SENIOR_CENTER"},
+        {"name": "현대2차경로당", "address": "경기도 안산시 단원구 인현3길 25, 101동 101호 (고잔동)", "latitude": 37.3269831, "longitude": 126.8214733, "type": "SENIOR_CENTER"},
+        {"name": "화랑경로당", "address": "경기도 안산시 단원구 인현3길 14 (고잔동)", "latitude": 37.3259851, "longitude": 126.8207893, "type": "SENIOR_CENTER"},
+        {"name": "황금경로당", "address": "경기도 안산시 단원구 황금길 9-4 (고잔동)", "latitude": 37.3320752, "longitude": 126.8297554, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127353200",
+      "name": "중앙동",
+      "gu": "단원구",
+      "bounds": [126.828116, 37.316289, 126.843253, 37.339033],
+      "places": [
+        {"name": "6단지경로당", "address": "경기도 안산시 단원구 예술대학로 105 (고잔동)", "latitude": 37.3253434, "longitude": 126.8369906, "type": "SENIOR_CENTER"},
+        {"name": "7단지경로당", "address": "경기도 안산시 단원구 당곡3로 3 (고잔동)", "latitude": 37.3272809, "longitude": 126.8406956, "type": "SENIOR_CENTER"},
+        {"name": "8단지경로당", "address": "경기도 안산시 단원구 당곡2로 29 (고잔동)", "latitude": 37.3254512, "longitude": 126.8378803, "type": "SENIOR_CENTER"},
+        {"name": "9단지경로당", "address": "경기도 안산시 단원구 당곡2로 30 (고잔동)", "latitude": 37.324193, "longitude": 126.8400547, "type": "SENIOR_CENTER"},
+        {"name": "센트럴푸르지오경로당", "address": "경기도 안산시 단원구 고잔로 115 (고잔동)", "latitude": 37.320278, "longitude": 126.8386933, "type": "SENIOR_CENTER"},
+        {"name": "중앙경로당", "address": "경기도 안산시 단원구 예술대학로2길 3-16 (고잔동)", "latitude": 37.3295289, "longitude": 126.8392958, "type": "SENIOR_CENTER"},
+        {"name": "포레나안산고잔경로당", "address": "경기도 안산시 단원구 예술대학로1길 7", "latitude": 37.3295331, "longitude": 126.836046, "type": "SENIOR_CENTER"},
+        {"name": "힐스테이트중앙아파트경로당", "address": "경기도 안산시 단원구 고잔로81(고잔동)", "latitude": 37.3196451, "longitude": 126.8357132, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127353500",
+      "name": "호수동",
+      "gu": "단원구",
+      "bounds": [126.820836, 37.3035, 126.843108, 37.317297],
+      "places": [
+        {"name": "고잔1차푸르지오(아)경로당", "address": "경기도 안산시 단원구 광덕동로 26 (고잔동)", "latitude": 37.3070502, "longitude": 126.8350047, "type": "SENIOR_CENTER"},
+        {"name": "고잔3차푸르지오경로당", "address": "경기도 안산시 단원구 광덕3로 201 (고잔동)", "latitude": 37.3130142, "longitude": 126.8358153, "type": "SENIOR_CENTER"},
+        {"name": "고잔4차푸르지오경로당", "address": "경기도 안산시 단원구 적금로 76 (고잔동)", "latitude": 37.3145043, "longitude": 126.8270153, "type": "SENIOR_CENTER"},
+        {"name": "고잔5차푸르지오경로당", "address": "경기도 안산시 단원구 광덕2로 121 (고잔동)", "latitude": 37.3109826, "longitude": 126.8235278, "type": "SENIOR_CENTER"},
+        {"name": "그린빌7단지경로당", "address": "경기도 안산시 단원구 광덕2로 216 (고잔동)", "latitude": 37.3084387, "longitude": 126.8332574, "type": "SENIOR_CENTER"},
+        {"name": "그린빌8단지경로당", "address": "경기도 안산시 단원구 광덕2로 241 (고잔동)", "latitude": 37.3117202, "longitude": 126.8380125, "type": "SENIOR_CENTER"},
+        {"name": "그린빌9단지경로당", "address": "경기도 안산시 단원구 안산천남로 245 (고잔동)", "latitude": 37.3101025, "longitude": 126.8402823, "type": "SENIOR_CENTER"},
+        {"name": "네오빌주공6단지경로당", "address": "경기도 안산시 단원구 광덕동로 78 (고잔동)", "latitude": 37.3098272, "longitude": 126.8333488, "type": "SENIOR_CENTER"},
+        {"name": "단원마을경로당", "address": "경기도 안산시 단원구 광덕서로 43 (고잔동)", "latitude": 37.3090194, "longitude": 126.8263672, "type": "SENIOR_CENTER"},
+        {"name": "레이크타운푸르지오경로당", "address": "경기도 안산시 단원구 광덕동로 25(고잔동)", "latitude": 37.3069392, "longitude": 126.831972, "type": "SENIOR_CENTER"},
+        {"name": "보네르빌리지(아)경로당", "address": "경기도 안산시 단원구 안산천남로 211 (고잔동)", "latitude": 37.3083704, "longitude": 126.840072, "type": "SENIOR_CENTER"},
+        {"name": "양지마을경로당", "address": "경기도 안산시 단원구 한양대학로 130 (고잔동)", "latitude": 37.304885, "longitude": 126.8365722, "type": "SENIOR_CENTER"},
+        {"name": "호수공원(아)경로당", "address": "경기도 안산시 단원구 광덕서로 19 (고잔동)", "latitude": 37.306901, "longitude": 126.8226437, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127354500",
+      "name": "원곡동",
+      "gu": "단원구",
+      "bounds": [126.785907, 37.322527, 126.800075, 37.339379],
+      "places": [
+        {"name": "귀향민경로당", "address": "경기도 안산시 단원구 원곡로 4 (원곡동)", "latitude": 37.3277505, "longitude": 126.7912216, "type": "SENIOR_CENTER"},
+        {"name": "양곡경로당", "address": "경기도 안산시 단원구 원본로 3길 28 (원곡동)", "latitude": 37.332189, "longitude": 126.7952693, "type": "SENIOR_CENTER"},
+        {"name": "온누리경로당", "address": "경기도 안산시 단원구 관산4길 26(원곡동)", "latitude": 37.3316635, "longitude": 126.7985387, "type": "SENIOR_CENTER"},
+        {"name": "원곡경로당", "address": "경기도 안산시 단원구 관산5길26(원곡동)", "latitude": 37.3310178, "longitude": 126.7988424, "type": "SENIOR_CENTER"},
+        {"name": "주택경로당", "address": "경기도 안산시 단원구 원본로 15 (원곡동)", "latitude": 37.3312071, "longitude": 126.7917643, "type": "SENIOR_CENTER"},
+        {"name": "한아름경로당", "address": "경기도 안산시 단원구 다문화길 16 (원곡동)", "latitude": 37.3294383, "longitude": 126.7906078, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127355500",
+      "name": "백운동",
+      "gu": "단원구",
+      "bounds": [126.791091, 37.3156, 126.805727, 37.333289],
+      "places": [
+        {"name": "경남아너스빌경로당", "address": "경기도 안산시 단원구 원선1로 61 (원곡동)", "latitude": 37.3286521, "longitude": 126.8028067, "type": "SENIOR_CENTER"},
+        {"name": "벽산블루밍경로당", "address": "경기도 안산시 단원구 원선로 50 (원곡동)", "latitude": 37.3282283, "longitude": 126.7983226, "type": "SENIOR_CENTER"},
+        {"name": "센트럴포레경로당", "address": "경기도 안산시 단원구 라성로 16 (원곡동)", "latitude": 37.3261261, "longitude": 126.7998341, "type": "SENIOR_CENTER"},
+        {"name": "안산푸르지오브리파크경로당", "address": "경기도 안산시 단원구 라성로 15(원곡동)", "latitude": 37.327249, "longitude": 126.7977176, "type": "SENIOR_CENTER"},
+        {"name": "양지경로당", "address": "경기도 안산시 단원구 원선로 31 (원곡동)", "latitude": 37.3280802, "longitude": 126.7970499, "type": "SENIOR_CENTER"},
+        {"name": "초지역메이저타운 에코단지경로당", "address": "경기도 안산시 단원구 원선1로 10", "latitude": 37.3237217, "longitude": 126.8044306, "type": "SENIOR_CENTER"},
+        {"name": "푸르지오8차경로당", "address": "경기도 안산시 단원구 원초로 9 (원곡동)", "latitude": 37.3301095, "longitude": 126.7999062, "type": "SENIOR_CENTER"},
+        {"name": "한화꿈에그린(아)경로당", "address": "경기도 안산시 단원구 원선1로 37 (원곡동)", "latitude": 37.3262317, "longitude": 126.8022583, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127356500",
+      "name": "신길동",
+      "gu": "단원구",
+      "bounds": [126.747667, 37.3184, 126.790774, 37.342009],
+      "places": [
+        {"name": "능길경로당", "address": "경기도 안산시 단원구 본동길 1 (신길동)", "latitude": 37.3307047, "longitude": 126.7657517, "type": "SENIOR_CENTER"},
+        {"name": "뱅골경로당", "address": "경기도 안산시 단원구 중앙대로 396 (신길동)", "latitude": 37.3305123, "longitude": 126.7837413, "type": "SENIOR_CENTER"},
+        {"name": "삼익경로당", "address": "경기도 안산시 단원구 새뿔길 55 (신길동)", "latitude": 37.3374154, "longitude": 126.7777055, "type": "SENIOR_CENTER"},
+        {"name": "샛뿔경로당", "address": "경기도 안산시 단원구새뿔길 28-1 (신길동)", "latitude": 37.3366695, "longitude": 126.7744112, "type": "SENIOR_CENTER"},
+        {"name": "신길5통경로당", "address": "경기도 안산시 단원구 신길동 37-2번지 한우리 농장옆", "latitude": 37.3380636, "longitude": 126.7820285, "type": "SENIOR_CENTER"},
+        {"name": "신길경로당", "address": "경기도 안산시 단원구신 길중앙로 17 (신길동)", "latitude": 37.3380805, "longitude": 126.7619296, "type": "SENIOR_CENTER"},
+        {"name": "신길두산위브경로당", "address": "경기도 안산시 단원구 새뿔길 42 (신길동, 두산위브)", "latitude": 37.3365515, "longitude": 126.775203, "type": "SENIOR_CENTER"},
+        {"name": "신길휴먼빌2차경로당", "address": "경기도 안산시 단원구 신각길 44 (신길동, 휴먼빌2차)", "latitude": 37.3372223, "longitude": 126.7747182, "type": "SENIOR_CENTER"},
+        {"name": "신길휴먼빌경로당", "address": "경기도 안산시 단원구 신각길 18 (신길동, 신길휴먼빌)", "latitude": 37.3366264, "longitude": 126.7719969, "type": "SENIOR_CENTER"},
+        {"name": "안산아이파크(아)경로당", "address": "경기도 안산시 단원구 도일로 46 (신길동, 안산아이파크)", "latitude": 37.3347856, "longitude": 126.785715, "type": "SENIOR_CENTER"},
+        {"name": "휴먼시아2단지경로당", "address": "경기도 안산시 단원구 삼일로 13 (신길동, 휴먼시아2단지)", "latitude": 37.3346857, "longitude": 126.777761, "type": "SENIOR_CENTER"},
+        {"name": "휴먼시아3단지경로당", "address": "경기도 안산시 단원구 새뿔길 101 (신길동, 휴먼시아3단지)", "latitude": 37.3367178, "longitude": 126.7834721, "type": "SENIOR_CENTER"},
+        {"name": "휴먼시아4단지경로당", "address": "경기도 안산시 단원구 도일로 60-34, 407동 1층 (신길동, 휴먼시아4단지)", "latitude": 37.3367487, "longitude": 126.7864846, "type": "SENIOR_CENTER"},
+        {"name": "휴먼시아5단지경로당", "address": "경기도 안산시 단원구 신길로 94 (신길동, 휴먼시아5단지)", "latitude": 37.3378722, "longitude": 126.7888477, "type": "SENIOR_CENTER"},
+        {"name": "휴먼시아6단지경로당", "address": "경기도 안산시 단원구 신길로 62 (신길동, 휴먼시아6단지) 603동", "latitude": 37.3367549, "longitude": 126.788843, "type": "SENIOR_CENTER"},
+        {"name": "휴먼시아7단지경로당", "address": "경기도 안산시 단원구 신길로 50 (신길동, 휴먼시아7단지) 706동", "latitude": 37.3340567, "longitude": 126.7893377, "type": "SENIOR_CENTER"},
+        {"name": "휴먼시아9단지경로당", "address": "경기도 안산시 단원구 도일로 26, 903동 1층 (신길동, 휴먼시아9단지)", "latitude": 37.3320326, "longitude": 126.7861316, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127357000",
+      "name": "초지동",
+      "gu": "단원구",
+      "bounds": [126.717159, 37.289405, 126.821516, 37.331656],
+      "places": [
+        {"name": "그린빌11단지경로당", "address": "경기도 안산시 단원구 화정천서로 157 (초지동, 그린빌주공11단지)", "latitude": 37.3117053, "longitude": 126.8200871, "type": "SENIOR_CENTER"},
+        {"name": "그린빌12단지경로당", "address": "경기도 안산시 단원구 광덕2로 76 (초지동)", "latitude": 37.3101697, "longitude": 126.8188025, "type": "SENIOR_CENTER"},
+        {"name": "그린빌13단지경로당", "address": "경기도 안산시 단원구 광덕2로 17 (초지동)", "latitude": 37.311579, "longitude": 126.8146628, "type": "SENIOR_CENTER"},
+        {"name": "그린빌14단지경로당", "address": "경기도 안산시 단원구 광덕2로 32 (초지동)", "latitude": 37.3104902, "longitude": 126.8130103, "type": "SENIOR_CENTER"},
+        {"name": "그린빌15단지경로당", "address": "경기도 안산시 단원구 초지2로 41 (초지동)", "latitude": 37.3076135, "longitude": 126.8118823, "type": "SENIOR_CENTER"},
+        {"name": "그린빌16단지경로당", "address": "경기도 안산시 단원구 초지2로 42 (초지동)", "latitude": 37.3059467, "longitude": 126.8118973, "type": "SENIOR_CENTER"},
+        {"name": "그린빌17단지경로당", "address": "경기도 안산시 단원구 초지2로 11 (초지동)", "latitude": 37.3083629, "longitude": 126.8111373, "type": "SENIOR_CENTER"},
+        {"name": "그린빌18단지경로당", "address": "경기도 안산시 단원구 초지2로 14 (초지동)", "latitude": 37.305568, "longitude": 126.8109782, "type": "SENIOR_CENTER"},
+        {"name": "둔배미경로당", "address": "경기도 안산시 단원구 신촌로 15 (초지동)", "latitude": 37.3147004, "longitude": 126.8177389, "type": "SENIOR_CENTER"},
+        {"name": "롯데캐슬경로당", "address": "경기도 안산시 단원구 원초로 61(초지동, 롯데캐슬아파트)", "latitude": 37.3275587, "longitude": 126.8060624, "type": "SENIOR_CENTER"},
+        {"name": "메이저타운 메트로 경로당", "address": "경기도 안산시 단원구 화랑으로 170(초지동)", "latitude": 37.3050261, "longitude": 126.7939087, "type": "SENIOR_CENTER"},
+        {"name": "와동경로당", "address": "경기도 안산시 단원구 사세충열로1길 24-17 (와동)", "latitude": 37.3050261, "longitude": 126.7939087, "type": "SENIOR_CENTER"},
+        {"name": "초지두산위브경로당", "address": "경기도 안산시 단원구 원선1로 38(초지동)", "latitude": 37.326166, "longitude": 126.8037826, "type": "SENIOR_CENTER"},
+        {"name": "초지푸르지오파크경로당", "address": "경기도 안산시 단원구 원초로 90(초지동)", "latitude": 37.3252998, "longitude": 126.8072377, "type": "SENIOR_CENTER"},
+        {"name": "행복한마을경로당", "address": "경기도 안산시 단원구 초지1로 78 (초지동, 행복한마을아파트)", "latitude": 37.3011337, "longitude": 126.8171727, "type": "SENIOR_CENTER"},
+        {"name": "호수마을풍림(아)경로당", "address": "경기도 안산시 단원구 광덕1로 80 (초지동)", "latitude": 37.3062941, "longitude": 126.8196075, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127358000",
+      "name": "선부1동",
+      "gu": "단원구",
+      "bounds": [126.798881, 37.327555, 126.817091, 37.337517],
+      "places": [
+        {"name": "관산경로당", "address": "경기도 안산시 단원구 원선로북길 37 (선부동, 광신연립)", "latitude": 37.3349853, "longitude": 126.8009008, "type": "SENIOR_CENTER"},
+        {"name": "라프리모경로당", "address": "경기도 안산시 단원구 선부광장남로 17", "latitude": 37.3311446, "longitude": 126.803354, "type": "SENIOR_CENTER"},
+        {"name": "선녀골경로당", "address": "경기도 안산시 단원구 선부광장서로1길 4 (선부동, 안산빌라)", "latitude": 37.3340346, "longitude": 126.8040078, "type": "SENIOR_CENTER"},
+        {"name": "선부E편한세상경로당", "address": "경기도 안산시 단원구 선부광장남로63 101동1층", "latitude": 37.3279651, "longitude": 126.808843, "type": "SENIOR_CENTER"},
+        {"name": "선부역어반스퀘어경로당", "address": "경기도 안산시 단원구 선부광장서로 42(선부동)", "latitude": 37.3329368, "longitude": 126.8050521, "type": "SENIOR_CENTER"},
+        {"name": "영산홍경로당", "address": "경기도 안산시 단원구 선부광장서로1길 5 (선부동, 동국빌라)", "latitude": 37.3334854, "longitude": 126.8040503, "type": "SENIOR_CENTER"},
+        {"name": "주공11단지경로당", "address": "경기도 안산시 단원구선부광장남로 111 (선부동)", "latitude": 37.3288269, "longitude": 126.8103188, "type": "SENIOR_CENTER"},
+        {"name": "주공12단지경로당", "address": "경기도 안산시 단원구 선부광장남로 113 (선부동)", "latitude": 37.3312827, "longitude": 126.8143988, "type": "SENIOR_CENTER"},
+        {"name": "주공13단지경로당", "address": "경기도 안산시 단원구화정로 9 (선부동)", "latitude": 37.3338613, "longitude": 126.8136587, "type": "SENIOR_CENTER"},
+        {"name": "주공14단지경로당", "address": "경기도 안산시 단원구 화정로 9 (선부동)", "latitude": 37.3338613, "longitude": 126.8136587, "type": "SENIOR_CENTER"},
+        {"name": "효자경로당", "address": "경기도 안산시 단원구 선부광장서로1길 17 (선부동, 효자빌라)", "latitude": 37.3335395, "longitude": 126.8031693, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127359000",
+      "name": "선부2동",
+      "gu": "단원구",
+      "bounds": [126.789232, 37.334459, 126.812467, 37.355621],
+      "places": [
+        {"name": "라온달미경로당", "address": "경기도 안산시 단원구 석수로138(선부동)", "latitude": 37.3489437, "longitude": 126.8054533, "type": "SENIOR_CENTER"},
+        {"name": "모곡경로당", "address": "경기도 안산시 단원구 지곡로6길 33 (선부동)", "latitude": 37.3401941, "longitude": 126.7965183, "type": "SENIOR_CENTER"},
+        {"name": "못골경로당", "address": "경기도 안산시 단원구 지곡로 36 (선부동)", "latitude": 37.3380691, "longitude": 126.8037859, "type": "SENIOR_CENTER"},
+        {"name": "생생아파트경로당", "address": "경기도 안산시 단원구 선부로 35(선부동)", "latitude": 37.3391858, "longitude": 126.7992767, "type": "SENIOR_CENTER"},
+        {"name": "석수경로당", "address": "경기도 안산시 단원구 북촌2길 17 (선부동)", "latitude": 37.3433348, "longitude": 126.8050229, "type": "SENIOR_CENTER"},
+        {"name": "석수골경로당", "address": "경기도 안산시 단원구 석수로9길 20 (선부동)", "latitude": 37.3465676, "longitude": 126.8039334, "type": "SENIOR_CENTER"},
+        {"name": "안산중흥S클래스경로당", "address": "경기도 안산시 단원구 선이로 17 (선부동, 안산 중흥S-클래스 더 퍼스트)", "latitude": 37.3425277, "longitude": 126.8018418, "type": "SENIOR_CENTER"},
+        {"name": "정지막골경로당", "address": "경기도 안산시 단원구 석수로 5-1 (선부동)", "latitude": 37.3403479, "longitude": 126.8081624, "type": "SENIOR_CENTER"},
+        {"name": "주공10단지경로당", "address": "경기도 안산시 단원구 석수로 6 (선부동)", "latitude": 37.3377011, "longitude": 126.808396, "type": "SENIOR_CENTER"},
+        {"name": "주공9단지경로당", "address": "경기도 안산시 단원구 선부광장1로 9 (선부동)", "latitude": 37.3359218, "longitude": 126.8052982, "type": "SENIOR_CENTER"},
+        {"name": "선부동 마을회관", "address": "경기도 안산시 단원구 대쟁이길 10 (선부동)", "latitude": 37.3506007, "longitude": 126.7982716, "type": "VILLAGE_HALL"}
+      ]
+    },
+    {
+      "code": "4127360000",
+      "name": "선부3동",
+      "gu": "단원구",
+      "bounds": [126.806028, 37.334003, 126.841012, 37.3642],
+      "places": [
+        {"name": "공작한양경로당", "address": "경기도 안산시 단원구 선부로 166 (선부동)", "latitude": 37.3407581, "longitude": 126.8140243, "type": "SENIOR_CENTER"},
+        {"name": "꽃우물경로당", "address": "경기도 안산시 단원구 꽃우물1길 24 (화정동)", "latitude": 37.3591805, "longitude": 126.8217156, "type": "SENIOR_CENTER"},
+        {"name": "너비울경로당", "address": "경기도 안산시 단원구 너비울길 156-5 (화정동)", "latitude": 37.3592138, "longitude": 126.8323599, "type": "SENIOR_CENTER"},
+        {"name": "달미경로당", "address": "경기도 안산시 단원구 화정천서로4안길 18 (선부동)", "latitude": 37.3440675, "longitude": 126.8160715, "type": "SENIOR_CENTER"},
+        {"name": "달산경로당", "address": "경기도 안산시 단원구 선삼로 1길 17(선부동)", "latitude": 37.3467258, "longitude": 126.8142917, "type": "SENIOR_CENTER"},
+        {"name": "동명벽산블루밍경로당", "address": "경기도 안산시 단원구 선부광장북로 36 (선부동, 벽산블루밍아파트)", "latitude": 37.3374371, "longitude": 126.8117179, "type": "SENIOR_CENTER"},
+        {"name": "산호한양경로당", "address": "경기도 안산시 단원구 달미로 10 (선부동)", "latitude": 37.3363547, "longitude": 126.8143079, "type": "SENIOR_CENTER"},
+        {"name": "샘물경로당", "address": "경기도 안산시 단원구 화정천서로7안길 19, 다솜팰리스 2층 (선부동)", "latitude": 37.3469069, "longitude": 126.816185, "type": "SENIOR_CENTER"},
+        {"name": "선부경로당", "address": "경기도 안산시 단원구 선삼로 68 (선부동)", "latitude": 37.3467047, "longitude": 126.8112899, "type": "SENIOR_CENTER"},
+        {"name": "수정한양경로당", "address": "경기도 안산시 단원구 선부광장북로 67 (선부동)", "latitude": 37.3381169, "longitude": 126.8157134, "type": "SENIOR_CENTER"},
+        {"name": "주공15단지경로당", "address": "경기도 안산시 단원구 선부광장1로 81 (선부동)", "latitude": 37.3356734, "longitude": 126.8137544, "type": "SENIOR_CENTER"}
+      ]
+    },
+    {
+      "code": "4127361000",
+      "name": "대부동",
+      "gu": "단원구",
+      "bounds": [126.379709, 37.082427, 126.654348, 37.324466],
+      "places": [
+        {"name": "갈마지경로당", "address": "경기도 안산시 단원구 웃갈마지길 14 (대부동동)", "latitude": 37.2438611, "longitude": 126.5912869, "type": "SENIOR_CENTER"},
+        {"name": "고유지경로당", "address": "경기도 안산시 단원구 고유지길 13- 1(대부동동)", "latitude": 37.2422067, "longitude": 126.5923432, "type": "SENIOR_CENTER"},
+        {"name": "남동경로당", "address": "경기도 안산시 단원구 대남로 137 (대부남동)", "latitude": 37.2310638, "longitude": 126.5820252, "type": "SENIOR_CENTER"},
+        {"name": "당전경로당", "address": "경기도 안산시 단원구 영굴길 27-5 (대부동동)", "latitude": 37.2470902, "longitude": 126.5976401, "type": "SENIOR_CENTER"},
+        {"name": "대부경로당", "address": "경기도 안산시 단원구 대부중앙로 101-1 (대부북동)", "latitude": 37.2431212, "longitude": 126.5851469, "type": "SENIOR_CENTER"},
+        {"name": "동동경로당", "address": "경기도 안산시 단원구 진두길 3 (대부동동)", "latitude": 37.2389353, "longitude": 126.6144707, "type": "SENIOR_CENTER"},
+        {"name": "두우현경로당", "address": "경기도 안산시 단원구 서낭당길 24 (대부북동)", "latitude": 37.258833, "longitude": 126.5864428, "type": "SENIOR_CENTER"},
+        {"name": "말부흥경로당", "address": "경기도 안산시 단원구 작은말길 12 (대부남동)", "latitude": 37.2149487, "longitude": 126.6075183, "type": "SENIOR_CENTER"},
+        {"name": "북11통경로당", "address": "경기도 안산시 단원구 장골길 22 (대부북동)", "latitude": 37.2437814, "longitude": 126.5808292, "type": "SENIOR_CENTER"},
+        {"name": "분지천경로당", "address": "경기도 안산시 단원구 솔따배기길 122 (대부동동)", "latitude": 37.2395827, "longitude": 126.602073, "type": "SENIOR_CENTER"},
+        {"name": "상동경로당", "address": "경기도 안산시 단원구 장골길 22 (대부북동)", "latitude": 37.2437814, "longitude": 126.5808292, "type": "SENIOR_CENTER"},
+        {"name": "선감경로당", "address": "경기도 안산시 단원구 개건너길 117 (선감동)", "latitude": 37.2227316, "longitude": 126.6313077, "type": "SENIOR_CENTER"},
+        {"name": "영전경로당", "address": "경기도 안산시 단원구 영전2길 13 (대부동동)", "latitude": 37.2560277, "longitude": 126.6051963, "type": "SENIOR_CENTER"},
+        {"name": "육도경로당", "address": "경기도 안산시 단원구 육도안길 9 (풍도동)", "latitude": 37.0983507, "longitude": 126.4505135, "type": "SENIOR_CENTER"},
+        {"name": "종현경로당", "address": "경기도 안산시 단원구 대선로 134 (대부북동)", "latitude": 37.2600756, "longitude": 126.5698481, "type": "SENIOR_CENTER"},
+        {"name": "중부흥경로당", "address": "경기도 안산시 단원구 부흥로 166 (대부남동)", "latitude": 37.2218149, "longitude": 126.5930262, "type": "SENIOR_CENTER"},
+        {"name": "풍도경로당", "address": "경기도 안산시 단원구 풍도2길 12 (풍도동)", "latitude": 37.1115865, "longitude": 126.3915485, "type": "SENIOR_CENTER"},
+        {"name": "행낭곡경로당", "address": "경기도 안산시 단원구 멍골길 33 (대부남동)", "latitude": 37.20668, "longitude": 126.5669353, "type": "SENIOR_CENTER"},
+        {"name": "흘곶경로당", "address": "경기도 안산시 단원구 대남로 544 (대부남동)", "latitude": 37.2110469, "longitude": 126.5540548, "type": "SENIOR_CENTER"},
+        {"name": "흥성마을경로당", "address": "경기도 안산시 단원구 대선로 694-10 (대부남동)", "latitude": 37.2281493, "longitude": 126.5526131, "type": "SENIOR_CENTER"},
+        {"name": "대부동동 마을회관", "address": "경기도 안산시 단원구 웃갈마지1길 1 (대부동동)", "latitude": 37.2447964, "longitude": 126.5900917, "type": "VILLAGE_HALL"},
+        {"name": "대부북동 마을회관", "address": "경기도 안산시 단원구 왕두재길 6 (대부북동)", "latitude": 37.24534, "longitude": 126.579973, "type": "VILLAGE_HALL"},
+        {"name": "선감동 마을회관", "address": "경기도 안산시 단원구 탄도길 21 (선감동)", "latitude": 37.1954024, "longitude": 126.6462659, "type": "VILLAGE_HALL"},
+        {"name": "풍도마을회관", "address": "경기도 안산시 단원구 풍도길 18 (풍도동)", "latitude": 37.1121188, "longitude": 126.3924465, "type": "VILLAGE_HALL"}
+      ]
+    }
+  ]
+}
